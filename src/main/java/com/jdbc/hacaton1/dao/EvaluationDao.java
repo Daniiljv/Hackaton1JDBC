@@ -47,4 +47,26 @@ public class EvaluationDao {
         }
         return id;
     }
+
+    public Integer getAvgEvaluation(Integer id){
+        int avgEvaluation = 0;
+
+        String SQL = "SELECT AVG(evaluate) FROM evaluate_product WHERE product_id = ?";
+
+        try(Connection connection = connection();
+            PreparedStatement statement = connection.prepareStatement(SQL)){
+
+            statement.setInt(1, id);
+
+            try(ResultSet resultSet = statement.executeQuery()){
+                if(resultSet.next()){
+                    avgEvaluation = resultSet.getInt(1);
+                }
+            }
+        }
+        catch (SQLException sqlException){
+            System.out.println(sqlException.getMessage());
+        }
+        return avgEvaluation;
+    }
 }

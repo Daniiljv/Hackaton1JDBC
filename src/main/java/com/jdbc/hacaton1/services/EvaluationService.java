@@ -15,4 +15,8 @@ public class EvaluationService {
     public Integer createEvaluation(EvaluationModel evaluation){
         return dao.createEvaluation(evaluation);
     }
+
+    public Integer getAvgEvaluation(Integer id){
+        return dao.getAvgEvaluation(id);
+    }
 }
