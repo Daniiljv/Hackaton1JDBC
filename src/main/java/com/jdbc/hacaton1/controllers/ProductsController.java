@@ -44,5 +44,9 @@ public class ProductsController {
     public List<MineProducts> getAllMineProducts(@PathVariable Integer userID){
        return service.getAllMineProducts(userID);
    }
+   @GetMapping("getProductWithoutEvaluationRandomly:{userId}")
+   public ProductsFeed getProductWithoutEvaluationRandomly(@PathVariable Integer userId){
+       return service.getProductWithoutEvaluationRandomly(userId);
+   }
 
 }

@@ -39,4 +39,8 @@ public class ProductsService {
     public List<MineProducts> getAllMineProducts(Integer userID){
         return dao.getAllMineProducts(userID);
     }
+
+    public ProductsFeed getProductWithoutEvaluationRandomly(Integer userId){
+        return dao.getProductWithoutEvaluationRandomly(userId);
+    }
 }

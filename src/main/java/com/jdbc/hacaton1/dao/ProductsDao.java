@@ -210,4 +210,35 @@ public class ProductsDao {
         }
         return products;
     }
+
+    public ProductsFeed getProductWithoutEvaluationRandomly(Integer userId){
+        ProductsFeed product = new ProductsFeed();
+
+        String SQL = "select p.id, p.category, p.url_photo, u.login from products p " +
+                     "join users u on u.id = p.users_id " +
+                     "left join evaluate_product ep on ep.product_id = p.id and ep.user_id = ? " +
+                     "where ep.id is null and p.users_id != ? " +
+                     "ORDER BY random() LIMIT 1";
+
+        try(Connection connection = connection();
+            PreparedStatement statement = connection.prepareStatement(SQL)){
+
+            statement.setInt(1, userId);
+            statement.setInt(2, userId);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while(resultSet.next()){
+
+                product.setId(resultSet.getInt(1));
+                product.setCategory(resultSet.getString(2));
+                product.setUrlToPhoto(resultSet.getString(3));
+                product.setUsersName(resultSet.getString(4));
+
+            }
+        }catch (SQLException sqlException){
+            System.out.println(sqlException.getMessage());
+        }
+        return product;
+    }
 }
