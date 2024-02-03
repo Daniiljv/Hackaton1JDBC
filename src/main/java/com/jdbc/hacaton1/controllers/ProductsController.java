@@ -1,5 +1,6 @@
 package com.jdbc.hacaton1.controllers;
 
+import com.jdbc.hacaton1.models.MineProducts;
 import com.jdbc.hacaton1.models.ProductWithSeller;
 import com.jdbc.hacaton1.models.ProductsFeed;
 import com.jdbc.hacaton1.models.ProductsModel;
@@ -33,4 +34,15 @@ public class ProductsController {
    public List<ProductsModel> getProductByUserId(@PathVariable Integer id){
        return service.getProductByUserId(id);
    }
+
+   @GetMapping("getAllProductsWithoutEvaluation:{userId}")
+    public List<ProductsFeed> getAllProductsWithoutEvaluation(@PathVariable Integer userId){
+       return service.getAllProductsWithoutEvaluation(userId);
+   }
+
+   @GetMapping("getAllMineProducts:{userID}")
+    public List<MineProducts> getAllMineProducts(@PathVariable Integer userID){
+       return service.getAllMineProducts(userID);
+   }
+
 }

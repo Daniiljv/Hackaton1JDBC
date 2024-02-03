@@ -1,6 +1,7 @@
 package com.jdbc.hacaton1.services;
 
 import com.jdbc.hacaton1.dao.ProductsDao;
+import com.jdbc.hacaton1.models.MineProducts;
 import com.jdbc.hacaton1.models.ProductWithSeller;
 import com.jdbc.hacaton1.models.ProductsFeed;
 import com.jdbc.hacaton1.models.ProductsModel;
@@ -29,5 +30,13 @@ public class ProductsService {
 
     public List<ProductsModel> getProductByUserId(Integer id){
         return dao.getProductByUserId(id);
+    }
+
+    public List<ProductsFeed> getAllProductsWithoutEvaluation(Integer userId){
+        return dao.getAllProductsWithoutEvaluation(userId);
+    }
+
+    public List<MineProducts> getAllMineProducts(Integer userID){
+        return dao.getAllMineProducts(userID);
     }
 }

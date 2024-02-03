@@ -48,8 +48,8 @@ public class EvaluationDao {
         return id;
     }
 
-    public Integer getAvgEvaluation(Integer id){
-        int avgEvaluation = 0;
+    public Double getAvgEvaluation(Integer id){
+        double avgEvaluation = 0;
 
         String SQL = "SELECT AVG(evaluate) FROM evaluate_product WHERE product_id = ?";
 
@@ -58,12 +58,12 @@ public class EvaluationDao {
 
             statement.setInt(1, id);
 
-            try(ResultSet resultSet = statement.executeQuery()){
+            ResultSet resultSet = statement.executeQuery();
+
                 if(resultSet.next()){
                     avgEvaluation = resultSet.getInt(1);
                 }
             }
-        }
         catch (SQLException sqlException){
             System.out.println(sqlException.getMessage());
         }

@@ -18,7 +18,7 @@ public class EvaluationController {
     }
 
     @GetMapping("getAvgEvaluationByProductId:{id}")
-        public Integer getAvgEvaluation(@PathVariable Integer id){
+        public Double getAvgEvaluation(@PathVariable Integer id){
         return service.getAvgEvaluation(id);
     }
 }

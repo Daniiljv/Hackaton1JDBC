@@ -16,7 +16,7 @@ public class EvaluationService {
         return dao.createEvaluation(evaluation);
     }
 
-    public Integer getAvgEvaluation(Integer id){
+    public Double getAvgEvaluation(Integer id){
         return dao.getAvgEvaluation(id);
     }
 }

@@ -1,5 +1,6 @@
 package com.jdbc.hacaton1.dao;
 
+import com.jdbc.hacaton1.models.MineProducts;
 import com.jdbc.hacaton1.models.ProductWithSeller;
 import com.jdbc.hacaton1.models.ProductsFeed;
 import com.jdbc.hacaton1.models.ProductsModel;
@@ -136,6 +137,75 @@ public class ProductsDao {
                 }
             }
         } catch (SQLException sqlException) {
+            System.out.println(sqlException.getMessage());
+        }
+        return products;
+    }
+
+    public List<ProductsFeed> getAllProductsWithoutEvaluation(Integer userId){
+        List<ProductsFeed> products = new ArrayList<>();
+
+        String SQL = "select p.id, p.category, p.url_photo, u.login from products p " +
+                     "join users u on u.id = p.users_id " +
+                     "left join evaluate_product ep on ep.product_id = p.id and ep.user_id = ? " +
+                     "where ep.id is null and p.users_id != ?";
+
+        try(Connection connection = connection();
+            PreparedStatement statement = connection.prepareStatement(SQL)){
+
+            statement.setInt(1, userId);
+            statement.setInt(2, userId);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while(resultSet.next()){
+                ProductsFeed product = new ProductsFeed();
+
+                product.setId(resultSet.getInt(1));
+                product.setCategory(resultSet.getString(2));
+                product.setUrlToPhoto(resultSet.getString(3));
+                product.setUsersName(resultSet.getString(4));
+
+                products.add(product);
+            }
+        }catch (SQLException sqlException){
+            System.out.println(sqlException.getMessage());
+        }
+        return products;
+    }
+
+    public List<MineProducts> getAllMineProducts(Integer userID){
+        List<MineProducts> products = new ArrayList<>();
+
+        String SQL = "select p.id, p.category, p.url_photo, p.fabric, p.size, p.description, avg(ep.evaluate), count(distinct c.id) from products p " +
+                     "join users u on p.users_id = u.id " +
+                     "left join evaluate_product ep on p.id = ep.product_id " +
+                     "left join comments c on p.id = c.product_id " +
+                     "where p.users_id = ?\n" +
+                     "group by p.id";
+
+        try(Connection connection = connection();
+            PreparedStatement statement = connection.prepareStatement(SQL)){
+
+            statement.setInt(1,userID);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()){
+                MineProducts product = new MineProducts();
+
+                product.setId(resultSet.getInt(1));
+                product.setCategory(resultSet.getString(2));
+                product.setUrlPhoto(resultSet.getString(3));
+                product.setFabric(resultSet.getString(4));
+                product.setSize(resultSet.getString(5));
+                product.setDescription(resultSet.getString(6));
+                product.setAvgEvaluation(resultSet.getDouble(7));
+                product.setCountOfComments(resultSet.getInt(8));
+
+                products.add(product);
+            }
+        }catch (SQLException sqlException){
             System.out.println(sqlException.getMessage());
         }
         return products;
