@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+
 public class ProductsController {
 
    private final ProductsService service;
@@ -47,6 +48,11 @@ public class ProductsController {
    @GetMapping("getProductWithoutEvaluationRandomly:{userId}")
    public ProductsFeed getProductWithoutEvaluationRandomly(@PathVariable Integer userId){
        return service.getProductWithoutEvaluationRandomly(userId);
+   }
+
+   @DeleteMapping("deleteProductById:")
+   public String deleteProductById(@RequestParam Integer id){
+       return service.deleteProductById(id);
    }
 
 }

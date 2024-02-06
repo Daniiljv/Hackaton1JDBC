@@ -25,4 +25,12 @@ public class CommentsService {
     public List<GeneralComments> getCommentsByUserId(Integer id){
         return dao.getCommentsByUserId(id);
     }
+
+    public void updateComment(Integer id, CommentsModel comment){
+        dao.updateComment(id, comment);
+    }
+
+    public String deleteCommentById(Integer id){
+        return dao.deleteCommentById(id);
+    }
 }

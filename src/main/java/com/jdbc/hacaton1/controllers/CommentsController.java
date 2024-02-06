@@ -29,4 +29,14 @@ public class CommentsController {
     public List<GeneralComments> getCommentsByUserId(@PathVariable Integer id){
         return service.getCommentsByUserId(id);
     }
+
+    @PutMapping("updateCommentByID")
+    public void updateComment(@RequestParam Integer id, @RequestBody CommentsModel comment){
+        service.updateComment(id, comment);
+    }
+
+    @DeleteMapping("deleteCommentById:")
+    public String deleteCommentById(@RequestParam Integer id){
+        return service.deleteCommentById(id);
+    }
 }

@@ -12,5 +12,7 @@ public class GeneralComments {
 
     private String userName;
     private String comment;
+    private Integer likesCount;
+    private Integer dislikesCount;
 
 }

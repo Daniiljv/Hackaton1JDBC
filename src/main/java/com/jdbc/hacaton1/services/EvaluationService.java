@@ -19,4 +19,8 @@ public class EvaluationService {
     public Double getAvgEvaluation(Integer id){
         return dao.getAvgEvaluation(id);
     }
+
+    public String deleteEvaluationById(Integer id){
+        return dao.deleteEvaluationById(id);
+    }
 }

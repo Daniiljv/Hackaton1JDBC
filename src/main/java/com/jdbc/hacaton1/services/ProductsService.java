@@ -43,4 +43,8 @@ public class ProductsService {
     public ProductsFeed getProductWithoutEvaluationRandomly(Integer userId){
         return dao.getProductWithoutEvaluationRandomly(userId);
     }
+
+    public String deleteProductById(Integer id){
+        return dao.deleteProductById(id);
+    }
 }

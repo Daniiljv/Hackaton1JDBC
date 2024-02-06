@@ -21,4 +21,9 @@ public class EvaluationController {
         public Double getAvgEvaluation(@PathVariable Integer id){
         return service.getAvgEvaluation(id);
     }
+
+    @DeleteMapping("deleteEvaluationById:")
+    public String deleteEvaluationById(@RequestParam Integer id){
+        return service.deleteEvaluationById(id);
+    }
 }
