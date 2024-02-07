@@ -25,10 +25,22 @@ public class UsersController {
         return service.getUserById(id);
     }
 
+    @GetMapping("getIdByLoginAndPassword")
+    public Integer getIdByLoginAndPassword(@RequestBody UsersModel user) {
+        return service.getIdByLoginAndPassword(user);
+    }
     @PostMapping("createUser")
     public Integer createUser(@RequestBody UsersModel userToCreate) {
         return service.createUser(userToCreate.getLogin(), userToCreate.getPassword());
     }
 
+    @PutMapping("updateUserById")
+    public String updateUserById(@RequestParam Integer id, @RequestBody UsersModel user){
+        return service.updateUserById(id, user);
+    }
 
+    @PutMapping("updateUsersRateById")
+    public String updateUsersRateById(@RequestParam Integer id, @RequestParam Integer rate){
+        return service.updateUsersRateById(id, rate);
+    }
 }

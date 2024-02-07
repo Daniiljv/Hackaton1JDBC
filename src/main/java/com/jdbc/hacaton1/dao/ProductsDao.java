@@ -24,5 +24,8 @@ public interface ProductsDao {
 
     ProductsFeed getProductWithoutEvaluationRandomly(Integer userId);
 
+    String updateProductById(Integer id, ProductsModel product);
+
     String deleteProductById(Integer id);
+
 }

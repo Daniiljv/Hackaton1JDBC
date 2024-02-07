@@ -13,4 +13,9 @@ public interface UsersDao {
 
     PrivateUserModel getUserById(Integer id);
 
+    String updateUserById(Integer id, UsersModel user);
+
+    String updateUsersRateById(Integer id, Integer rate);
+
+    Integer getIdByLoginAndPassword(UsersModel user);
 }

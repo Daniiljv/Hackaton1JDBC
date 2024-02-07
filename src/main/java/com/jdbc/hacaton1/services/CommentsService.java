@@ -26,11 +26,15 @@ public class CommentsService {
         return dao.getCommentsByUserId(id);
     }
 
-    public void updateComment(Integer id, CommentsModel comment){
-        dao.updateComment(id, comment);
+    public String updateCommentsLikesDislikesById(Integer id, CommentsModel comment){
+        return dao.updateCommentsLikesDislikesById(id, comment);
     }
 
     public String deleteCommentById(Integer id){
         return dao.deleteCommentById(id);
+    }
+
+    public String updateCommentByID(Integer id, String comment){
+        return dao.updateCommentByID(id, comment);
     }
 }

@@ -15,7 +15,9 @@ public interface CommentsDao {
 
     List<GeneralComments> getCommentsByUserId(Integer id);
 
-    void updateComment(Integer id, CommentsModel comment);
+    String updateCommentsLikesDislikesById(Integer id, CommentsModel comment);
+
+    String updateCommentByID(Integer id, String comment);
 
     String deleteCommentById(Integer id);
 }

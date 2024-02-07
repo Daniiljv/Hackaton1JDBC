@@ -235,6 +235,30 @@ public class ProductsDaoImpl implements ProductsDao {
         return product;
     }
 
+    @Override
+    public String updateProductById(Integer id, ProductsModel product) {
+
+        String SQL = "update products " +
+                     "set category = ?, url_photo = ?, fabric = ?, size = ?, description = ? " +
+                     "where id = ?";
+
+        try(Connection connection = database.connection();
+            PreparedStatement statement = connection.prepareStatement(SQL)){
+
+            statement.setString(1, product.getCategory());
+            statement.setString(2, product.getUrlPhoto());
+            statement.setString(3, product.getFabric());
+            statement.setString(4, product.getSize());
+            statement.setString(5, product.getDescription());
+            statement.setInt(6, id);
+
+            statement.executeUpdate();
+        }catch (SQLException sqlException){
+            System.out.println(sqlException.getMessage());
+        }
+        return "Product with id " + id + " is updated";
+    }
+
     public String deleteProductById(Integer id){
 
         String SQL = "delete from comments where product_id = ?; " +

@@ -30,10 +30,16 @@ public class CommentsController {
         return service.getCommentsByUserId(id);
     }
 
-    @PutMapping("updateCommentByID")
-    public void updateComment(@RequestParam Integer id, @RequestBody CommentsModel comment){
-        service.updateComment(id, comment);
+    @PutMapping("updateCommentsLikesDislikesByID")
+    public String updateCommentsLikesDislikesById(@RequestParam Integer id, @RequestBody CommentsModel comment){
+        return service.updateCommentsLikesDislikesById(id, comment);
     }
+
+    @PutMapping("updateCommentByID")
+    public String updateCommentByID(@RequestParam Integer id, @RequestParam String comment){
+        return service.updateCommentByID(id, comment);
+    }
+
 
     @DeleteMapping("deleteCommentById:")
     public String deleteCommentById(@RequestParam Integer id){

@@ -109,7 +109,7 @@ public class CommentsDaoImpl implements CommentsDao {
         return comments;
     }
 
-    public void updateComment(Integer id, CommentsModel comment) {
+    public String updateCommentsLikesDislikesById(Integer id, CommentsModel comment) {
 
         String SQL = "update comments " +
                      "set likes_count = ?, dislikes_count = ? " +
@@ -127,6 +127,27 @@ public class CommentsDaoImpl implements CommentsDao {
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        return "Comment with id " + id + " is updated";
+    }
+
+    public String updateCommentByID(Integer id, String comment) {
+
+        String SQL = "update comments " +
+                     "set comment = ? " +
+                     "where id = ?";
+
+        try (Connection connection = database.connection();
+             PreparedStatement statement = connection.prepareStatement(SQL)) {
+
+            statement.setString(1, comment);
+            statement.setInt(2, id);
+
+            statement.executeUpdate();
+
+        } catch (SQLException sqlException) {
+            System.out.println(sqlException.getMessage());
+        }
+        return "Comment with id " + id + " is updated";
     }
 
     public String deleteCommentById(Integer id){

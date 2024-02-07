@@ -47,4 +47,8 @@ public class ProductsService {
     public String deleteProductById(Integer id){
         return dao.deleteProductById(id);
     }
+
+    public String updateProductById(Integer id, ProductsModel product){
+        return dao.updateProductById(id, product);
+    }
 }

@@ -50,6 +50,11 @@ public class ProductsController {
        return service.getProductWithoutEvaluationRandomly(userId);
    }
 
+   @PostMapping("updateProductById")
+   public String updateProductById(@RequestParam Integer id, @RequestBody ProductsModel product){
+       return service.updateProductById(id, product);
+   }
+
    @DeleteMapping("deleteProductById:")
    public String deleteProductById(@RequestParam Integer id){
        return service.deleteProductById(id);

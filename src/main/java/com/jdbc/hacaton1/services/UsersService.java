@@ -26,4 +26,13 @@ public class UsersService {
       return dao.getUserById(id);
     }
 
+    public String updateUserById(Integer id, UsersModel user){
+        return dao.updateUserById(id, user);
+    }
+    public String updateUsersRateById(Integer id, Integer rate){
+        return dao.updateUsersRateById(id, rate);
+    }
+    public Integer getIdByLoginAndPassword(UsersModel user){
+        return dao.getIdByLoginAndPassword(user);
+    }
 }

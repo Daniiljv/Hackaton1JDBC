@@ -18,6 +18,7 @@ public class UsersDaoImpl implements UsersDao {
 
     private final DatabaseConfiguration database;
 
+    @Override
     public List<UsersModel> getAllUsers() {
         String SQL = "select * from users";
         List<UsersModel> users = new ArrayList<>();
@@ -44,6 +45,7 @@ public class UsersDaoImpl implements UsersDao {
         return users;
     }
 
+    @Override
     public Integer createUser(String login, String password) {
         int userId = 0;
 
@@ -65,6 +67,7 @@ public class UsersDaoImpl implements UsersDao {
         return userId;
     }
 
+    @Override
     public PrivateUserModel getUserById(Integer id) {
 
         PrivateUserModel user = new PrivateUserModel();
@@ -88,6 +91,73 @@ public class UsersDaoImpl implements UsersDao {
             System.out.println(sqlException.getMessage());
         }
         return user;
+    }
+
+    @Override
+    public String updateUserById(Integer id, UsersModel user) {
+
+        String SQL = "update users " +
+                     "set login = ?, password = ? " +
+                     "where id = ?";
+
+        try(Connection connection = database.connection();
+            PreparedStatement statement = connection.prepareStatement(SQL)){
+
+            statement.setString(1, user.getLogin());
+            statement.setString(2, user.getPassword());
+            statement.setInt(3, id);
+
+            statement.executeUpdate();
+        }catch (SQLException sqlException){
+            System.out.println(sqlException.getMessage());
+        }
+        return "User with id " + id + " is updated";
+    }
+
+    @Override
+    public String updateUsersRateById(Integer id, Integer rate) {
+
+        String SQL = "update users " +
+                     "set rate = ? " +
+                     "where id = ?";
+
+        try(Connection connection = database.connection();
+            PreparedStatement statement = connection.prepareStatement(SQL)){
+
+            statement.setInt(1, rate);
+            statement.setInt(2, id);
+
+            statement.executeUpdate();
+        }catch (SQLException sqlException){
+            System.out.println(sqlException.getMessage());
+        }
+            return "Users rate is " + rate;
+    }
+
+    @Override
+    public Integer getIdByLoginAndPassword(UsersModel user) {
+
+        int id = 0;
+
+        String SQL = "select id from users " +
+                     "where login = ? and password = ? ";
+
+        try(Connection connection = database.connection();
+            PreparedStatement statement = connection.prepareStatement(SQL)){
+
+            statement.setString(1, user.getLogin());
+            statement.setString(2, user.getPassword());
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                id = resultSet.getInt(1);
+            }
+
+        }catch (SQLException sqlException){
+            System.out.println(sqlException.getMessage());
+        }
+          return id;
     }
 
     public String deleteUserById(Integer id){
