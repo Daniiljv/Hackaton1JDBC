@@ -18,4 +18,6 @@ public interface UsersDao {
     String updateUsersRateById(Integer id, Integer rate);
 
     Integer getIdByLoginAndPassword(UsersModel user);
+
+    String deleteUserById(Integer id);
 }

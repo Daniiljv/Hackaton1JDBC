@@ -12,50 +12,51 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("products/")
 
 public class ProductsController {
 
    private final ProductsService service;
 
-   @GetMapping("getProductsFeed")
+   @GetMapping("getFeed")
     public List<ProductsFeed> getProductsFeed(){
        return service.getProductsFeed();
    }
 
-   @GetMapping("getProductById:{id}")
+   @GetMapping("getById/{id}")
     public ProductWithSeller getProductById(@PathVariable Integer id){
        return service.getProductById(id);
    }
 
-   @PostMapping("createProduct")
+   @PostMapping("create")
    public Integer createProduct(@RequestBody ProductsModel product){
        return service.createProduct(product);
    }
-   @GetMapping("getProductsByUserId:{id}")
+   @GetMapping("getByUserId/{id}")
    public List<ProductsModel> getProductByUserId(@PathVariable Integer id){
        return service.getProductByUserId(id);
    }
 
-   @GetMapping("getAllProductsWithoutEvaluation:{userId}")
+   @GetMapping("getAllWithoutEvaluation/{userId}")
     public List<ProductsFeed> getAllProductsWithoutEvaluation(@PathVariable Integer userId){
        return service.getAllProductsWithoutEvaluation(userId);
    }
 
-   @GetMapping("getAllMineProducts:{userID}")
+   @GetMapping("getAllMine/{userID}")
     public List<MineProducts> getAllMineProducts(@PathVariable Integer userID){
        return service.getAllMineProducts(userID);
    }
-   @GetMapping("getProductWithoutEvaluationRandomly:{userId}")
+   @GetMapping("getWithoutEvaluationRandomly/{userId}")
    public ProductsFeed getProductWithoutEvaluationRandomly(@PathVariable Integer userId){
        return service.getProductWithoutEvaluationRandomly(userId);
    }
 
-   @PostMapping("updateProductById")
+   @PutMapping("updateById")
    public String updateProductById(@RequestParam Integer id, @RequestBody ProductsModel product){
        return service.updateProductById(id, product);
    }
 
-   @DeleteMapping("deleteProductById:")
+   @DeleteMapping("delete")
    public String deleteProductById(@RequestParam Integer id){
        return service.deleteProductById(id);
    }

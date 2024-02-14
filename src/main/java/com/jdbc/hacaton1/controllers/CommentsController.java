@@ -10,38 +10,39 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("comments/")
 
 public class CommentsController {
 
     private final CommentsService service;
 
-    @PostMapping("createComment")
+    @PostMapping("create")
     public Integer createComment(@RequestBody CommentsModel comment){
         return service.createComment(comment);
     }
 
-    @GetMapping("getCommentsByProductId:{id}")
+    @GetMapping("getByProductId/{id}")
     public List<GeneralComments> getCommentsByProductId(@PathVariable Integer id){
         return service.getCommentsByProductId(id);
     }
 
-    @GetMapping("getCommentsByUserId:{id}")
+    @GetMapping("getByUserId/{id}")
     public List<GeneralComments> getCommentsByUserId(@PathVariable Integer id){
         return service.getCommentsByUserId(id);
     }
 
-    @PutMapping("updateCommentsLikesDislikesByID")
+    @PutMapping("updateLikesDislikesById")
     public String updateCommentsLikesDislikesById(@RequestParam Integer id, @RequestBody CommentsModel comment){
         return service.updateCommentsLikesDislikesById(id, comment);
     }
 
-    @PutMapping("updateCommentByID")
-    public String updateCommentByID(@RequestParam Integer id, @RequestParam String comment){
-        return service.updateCommentByID(id, comment);
+    @PutMapping("updateCommentById")
+    public String updateCommentById(@RequestParam Integer id, @RequestParam String comment){
+        return service.updateCommentById(id, comment);
     }
 
 
-    @DeleteMapping("deleteCommentById:")
+    @DeleteMapping("delete")
     public String deleteCommentById(@RequestParam Integer id){
         return service.deleteCommentById(id);
     }

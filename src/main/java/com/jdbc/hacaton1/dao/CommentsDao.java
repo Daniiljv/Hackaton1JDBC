@@ -17,7 +17,7 @@ public interface CommentsDao {
 
     String updateCommentsLikesDislikesById(Integer id, CommentsModel comment);
 
-    String updateCommentByID(Integer id, String comment);
+    String updateCommentById(Integer id, String comment);
 
     String deleteCommentById(Integer id);
 }

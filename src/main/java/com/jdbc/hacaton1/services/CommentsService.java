@@ -34,7 +34,7 @@ public class CommentsService {
         return dao.deleteCommentById(id);
     }
 
-    public String updateCommentByID(Integer id, String comment){
-        return dao.updateCommentByID(id, comment);
+    public String updateCommentById(Integer id, String comment){
+        return dao.updateCommentById(id, comment);
     }
 }

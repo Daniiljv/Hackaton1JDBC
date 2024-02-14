@@ -35,4 +35,7 @@ public class UsersService {
     public Integer getIdByLoginAndPassword(UsersModel user){
         return dao.getIdByLoginAndPassword(user);
     }
+    public String deleteUserById(Integer id){
+        return dao.deleteUserById(id);
+    }
 }

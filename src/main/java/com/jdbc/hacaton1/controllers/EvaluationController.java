@@ -7,22 +7,23 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("evaluations/")
 
 public class EvaluationController {
 
     private final EvaluationService service;
 
-    @PostMapping("createEvaluation")
+    @PostMapping("create")
     public Integer createEvaluation(@RequestBody EvaluationModel evaluation){
         return service.createEvaluation(evaluation);
     }
 
-    @GetMapping("getAvgEvaluationByProductId:{id}")
+    @GetMapping("getAvgEvaluationByProductId/{id}")
         public Double getAvgEvaluation(@PathVariable Integer id){
         return service.getAvgEvaluation(id);
     }
 
-    @DeleteMapping("deleteEvaluationById:")
+    @DeleteMapping("deleteById")
     public String deleteEvaluationById(@RequestParam Integer id){
         return service.deleteEvaluationById(id);
     }

@@ -11,16 +11,17 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("users/")
 public class UsersController {
 
     private final UsersService service;
 
-    @GetMapping("getAllUsers")
+    @GetMapping("getAll")
     private List<UsersModel> getAllUsers() {
         return service.getAllUsers();
     }
 
-    @GetMapping("getUserById:{id}")
+    @GetMapping("getById/{id}")
     public PrivateUserModel getUserById(@PathVariable Integer id){
         return service.getUserById(id);
     }
@@ -29,18 +30,22 @@ public class UsersController {
     public Integer getIdByLoginAndPassword(@RequestBody UsersModel user) {
         return service.getIdByLoginAndPassword(user);
     }
-    @PostMapping("createUser")
+    @PostMapping("create")
     public Integer createUser(@RequestBody UsersModel userToCreate) {
         return service.createUser(userToCreate.getLogin(), userToCreate.getPassword());
     }
 
-    @PutMapping("updateUserById")
+    @PutMapping("updateById")
     public String updateUserById(@RequestParam Integer id, @RequestBody UsersModel user){
         return service.updateUserById(id, user);
     }
 
-    @PutMapping("updateUsersRateById")
+    @PutMapping("updateRateById")
     public String updateUsersRateById(@RequestParam Integer id, @RequestParam Integer rate){
         return service.updateUsersRateById(id, rate);
+    }
+    @DeleteMapping("delete")
+    public String deleteUserById(@RequestParam Integer id){
+        return service.deleteUserById(id);
     }
 }
