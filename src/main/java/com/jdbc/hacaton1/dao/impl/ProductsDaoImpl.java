@@ -20,6 +20,7 @@ public class ProductsDaoImpl implements ProductsDao {
 
     private final DatabaseConfiguration database;
 
+    @Override
     public List<ProductsFeed> getProductsFeed() {
 
         List<ProductsFeed> productsFeed = new ArrayList<>();
@@ -32,18 +33,18 @@ public class ProductsDaoImpl implements ProductsDao {
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(SQL)) {
 
-                while (resultSet.next()) {
-                    ProductsFeed product = new ProductsFeed();
+            while (resultSet.next()) {
+                ProductsFeed product = new ProductsFeed();
 
-                    product.setId(resultSet.getInt(1));
-                    product.setCategory(resultSet.getString(2));
-                    product.setUrlToPhoto(resultSet.getString(3));
-                    product.setUsersName(resultSet.getString(4));
+                product.setId(resultSet.getInt(1));
+                product.setCategory(resultSet.getString(2));
+                product.setUrlToPhoto(resultSet.getString(3));
+                product.setUsersName(resultSet.getString(4));
 
-                    productsFeed.add(product);
-                }
-                if(productsFeed.isEmpty()){
-                    return null;
+                productsFeed.add(product);
+            }
+            if (productsFeed.isEmpty()) {
+                return null;
             }
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
@@ -51,6 +52,7 @@ public class ProductsDaoImpl implements ProductsDao {
         return productsFeed;
     }
 
+    @Override
     public ProductWithSeller getProductById(Integer id) {
         ProductWithSeller product = null;
 
@@ -74,8 +76,6 @@ public class ProductsDaoImpl implements ProductsDao {
                     product.setDescription(resultSet.getString(6));
                     product.setUsersName(resultSet.getString(7));
 
-                } else {
-                    return null;
                 }
             }
         } catch (SQLException sqlException) {
@@ -84,6 +84,7 @@ public class ProductsDaoImpl implements ProductsDao {
         return product;
     }
 
+    @Override
     public Integer createProduct(ProductsModel product) {
 
         int productId = 0;
@@ -120,6 +121,7 @@ public class ProductsDaoImpl implements ProductsDao {
         return productId;
     }
 
+    @Override
     public List<ProductsModel> getProductByUserId(Integer id) {
 
         List<ProductsModel> products = new ArrayList<>();
@@ -136,20 +138,20 @@ public class ProductsDaoImpl implements ProductsDao {
 
             ResultSet resultSet = statement.executeQuery();
 
-                while (resultSet.next()) {
-                    ProductsModel product = new ProductsModel();
-                    product.setId(resultSet.getInt(1));
-                    product.setCategory(resultSet.getString(2));
-                    product.setUrlPhoto(resultSet.getString(3));
-                    product.setFabric(resultSet.getString(4));
-                    product.setSize(resultSet.getString(5));
-                    product.setDescription(resultSet.getString(6));
-                    product.setUsersId(id);
+            while (resultSet.next()) {
+                ProductsModel product = new ProductsModel();
+                product.setId(resultSet.getInt(1));
+                product.setCategory(resultSet.getString(2));
+                product.setUrlPhoto(resultSet.getString(3));
+                product.setFabric(resultSet.getString(4));
+                product.setSize(resultSet.getString(5));
+                product.setDescription(resultSet.getString(6));
+                product.setUsersId(id);
 
-                    products.add(product);
-                }
-                if(products.isEmpty()){
-                    return null;
+                products.add(product);
+            }
+            if (products.isEmpty()) {
+                return null;
             }
 
         } catch (SQLException sqlException) {
@@ -158,6 +160,7 @@ public class ProductsDaoImpl implements ProductsDao {
         return products;
     }
 
+    @Override
     public List<ProductsFeed> getAllProductsWithoutEvaluation(Integer userId) {
         List<ProductsFeed> products = new ArrayList<>();
 
@@ -174,25 +177,26 @@ public class ProductsDaoImpl implements ProductsDao {
 
             ResultSet resultSet = statement.executeQuery();
 
-                while (resultSet.next()) {
-                    ProductsFeed product = new ProductsFeed();
+            while (resultSet.next()) {
+                ProductsFeed product = new ProductsFeed();
 
-                    product.setId(resultSet.getInt(1));
-                    product.setCategory(resultSet.getString(2));
-                    product.setUrlToPhoto(resultSet.getString(3));
-                    product.setUsersName(resultSet.getString(4));
+                product.setId(resultSet.getInt(1));
+                product.setCategory(resultSet.getString(2));
+                product.setUrlToPhoto(resultSet.getString(3));
+                product.setUsersName(resultSet.getString(4));
 
-                    products.add(product);
-                }
-                if(products.isEmpty()) {
-                    return null;
-                }
+                products.add(product);
+            }
+            if (products.isEmpty()) {
+                return null;
+            }
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
         return products;
     }
 
+    @Override
     public List<MineProducts> getAllMineProducts(Integer userId) {
         List<MineProducts> products = new ArrayList<>();
 
@@ -210,22 +214,22 @@ public class ProductsDaoImpl implements ProductsDao {
             ResultSet resultSet = statement.executeQuery();
 
 
-                while (resultSet.next()) {
-                    MineProducts product = new MineProducts();
+            while (resultSet.next()) {
+                MineProducts product = new MineProducts();
 
-                    product.setId(resultSet.getInt(1));
-                    product.setCategory(resultSet.getString(2));
-                    product.setUrlPhoto(resultSet.getString(3));
-                    product.setFabric(resultSet.getString(4));
-                    product.setSize(resultSet.getString(5));
-                    product.setDescription(resultSet.getString(6));
-                    product.setAvgEvaluation(resultSet.getDouble(7));
-                    product.setCountOfComments(resultSet.getInt(8));
+                product.setId(resultSet.getInt(1));
+                product.setCategory(resultSet.getString(2));
+                product.setUrlPhoto(resultSet.getString(3));
+                product.setFabric(resultSet.getString(4));
+                product.setSize(resultSet.getString(5));
+                product.setDescription(resultSet.getString(6));
+                product.setAvgEvaluation(resultSet.getDouble(7));
+                product.setCountOfComments(resultSet.getInt(8));
 
-                    products.add(product);
-                }
-                if(products.isEmpty()){
-                    return null;
+                products.add(product);
+            }
+            if (products.isEmpty()) {
+                return null;
             }
 
         } catch (SQLException sqlException) {
@@ -234,6 +238,7 @@ public class ProductsDaoImpl implements ProductsDao {
         return products;
     }
 
+    @Override
     public ProductsFeed getProductWithoutEvaluationRandomly(Integer userId) {
         ProductsFeed product = null;
 
@@ -299,6 +304,7 @@ public class ProductsDaoImpl implements ProductsDao {
         return "Product with id " + id + " is updated";
     }
 
+    @Override
     public String deleteProductById(Integer id) {
 
         String selectSQL = "select * from products where id = ?";

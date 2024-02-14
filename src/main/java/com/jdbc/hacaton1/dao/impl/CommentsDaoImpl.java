@@ -19,6 +19,7 @@ public class CommentsDaoImpl implements CommentsDao {
 
     private final DatabaseConfiguration database;
 
+    @Override
     public Integer createComment(CommentsModel comment) {
         int commentId = 0;
 
@@ -59,6 +60,7 @@ public class CommentsDaoImpl implements CommentsDao {
         return commentId;
     }
 
+    @Override
     public List<GeneralComments> getCommentsByProductId(Integer id) {
 
         List<GeneralComments> comments = new ArrayList<>();
@@ -95,6 +97,7 @@ public class CommentsDaoImpl implements CommentsDao {
         return comments;
     }
 
+    @Override
     public List<GeneralComments> getCommentsByUserId(Integer id) {
 
         List<GeneralComments> comments = new ArrayList<>();
@@ -130,6 +133,7 @@ public class CommentsDaoImpl implements CommentsDao {
         return comments;
     }
 
+    @Override
     public String updateCommentsLikesDislikesById(Integer id, CommentsModel comment) {
 
         String selectSQL = "select * from comments where id = ?";
@@ -159,6 +163,7 @@ public class CommentsDaoImpl implements CommentsDao {
         return "Comment with id " + id + " is updated";
     }
 
+    @Override
     public String updateCommentById(Integer id, String comment) {
 
         String selectSQL = "select * from comments where id = ?";
@@ -185,6 +190,7 @@ public class CommentsDaoImpl implements CommentsDao {
         return "Comment with id " + id + " is updated";
     }
 
+    @Override
     public String deleteCommentById(Integer id) {
 
         String selectSQL = "select * from comments where id = ?";

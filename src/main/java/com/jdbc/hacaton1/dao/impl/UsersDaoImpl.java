@@ -20,25 +20,24 @@ public class UsersDaoImpl implements UsersDao {
 
     @Override
     public List<UsersModel> getAllUsers() {
-        String SQL = "select * from users u " +
-                "where u.delete_time is null ";
+        String SQL = "select * from users u " + "where u.delete_time is null ";
         List<UsersModel> users = new ArrayList<>();
 
-        try (Connection connection = database.connection();
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) {
-                while (resultSet.next()) {
-                    UsersModel user = new UsersModel();
+        try (Connection connection = database.connection(); Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(SQL)) {
 
-                    user.setId(resultSet.getInt(1));
-                    user.setLogin(resultSet.getString(2));
-                    user.setPassword(resultSet.getString(3));
-                    user.setRate(resultSet.getInt(4));
+            while (resultSet.next()) {
+                UsersModel user = new UsersModel();
 
-                    users.add(user);
-                }
-            } else return null;
+                user.setId(resultSet.getInt(1));
+                user.setLogin(resultSet.getString(2));
+                user.setPassword(resultSet.getString(3));
+                user.setRate(resultSet.getInt(4));
+
+                users.add(user);
+            }
+            if (users.isEmpty()) {
+                return null;
+            }
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
@@ -51,8 +50,7 @@ public class UsersDaoImpl implements UsersDao {
 
         String insertSQL = "insert into users (login, password) values (?, ?) returning id";
 
-        try (Connection connection = database.connection();
-             PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
+        try (Connection connection = database.connection(); PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
 
             preparedStatement.setString(1, login);
             preparedStatement.setString(2, password);
@@ -70,23 +68,22 @@ public class UsersDaoImpl implements UsersDao {
     @Override
     public PrivateUserModel getUserById(Integer id) {
 
-        PrivateUserModel user = new PrivateUserModel();
+        PrivateUserModel user = null;
 
-        String SQL = "select id, login, rate from users " +
-                "where id = ? and delete_time is null ";
+        String SQL = "select id, login, rate from users " + "where id = ? and delete_time is null ";
 
-        try (Connection connection = database.connection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+        try (Connection connection = database.connection(); PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
             preparedStatement.setInt(1, id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                while (resultSet.next()) {
-                    user.setId(resultSet.getInt(1));
-                    user.setLogin(resultSet.getString(2));
-                    user.setRate(resultSet.getInt(3));
-                }
-            } else return null;
+
+            while (resultSet.next()) {
+                user = new PrivateUserModel();
+                user.setId(resultSet.getInt(1));
+                user.setLogin(resultSet.getString(2));
+                user.setRate(resultSet.getInt(3));
+            }
+
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
@@ -97,13 +94,9 @@ public class UsersDaoImpl implements UsersDao {
     public String updateUserById(Integer id, UsersModel user) {
 
         String selectSQL = "select * from users where id = ?";
-        String updateSQL = "update users " +
-                "set login = ?, password = ? " +
-                "where id = ? and delete_time is null ";
+        String updateSQL = "update users " + "set login = ?, password = ? " + "where id = ? and delete_time is null ";
 
-        try (Connection connection = database.connection();
-             PreparedStatement selectStatement = connection.prepareStatement(selectSQL);
-             PreparedStatement updateStatement = connection.prepareStatement(updateSQL)) {
+        try (Connection connection = database.connection(); PreparedStatement selectStatement = connection.prepareStatement(selectSQL); PreparedStatement updateStatement = connection.prepareStatement(updateSQL)) {
 
             selectStatement.setInt(1, id);
             ResultSet selectResult = selectStatement.executeQuery();
@@ -125,13 +118,9 @@ public class UsersDaoImpl implements UsersDao {
     public String updateUsersRateById(Integer id, Integer rate) {
 
         String selectSQL = "select * from users where id = ?";
-        String updateSQL = "update users " +
-                "set rate = ? " +
-                "where id = ? and delete_time is null ";
+        String updateSQL = "update users " + "set rate = ? " + "where id = ? and delete_time is null ";
 
-        try (Connection connection = database.connection();
-             PreparedStatement selectStatement = connection.prepareStatement(selectSQL);
-             PreparedStatement updateStatement = connection.prepareStatement(updateSQL)) {
+        try (Connection connection = database.connection(); PreparedStatement selectStatement = connection.prepareStatement(selectSQL); PreparedStatement updateStatement = connection.prepareStatement(updateSQL)) {
 
             selectStatement.setInt(1, id);
             ResultSet selectResult = selectStatement.executeQuery();
@@ -153,11 +142,9 @@ public class UsersDaoImpl implements UsersDao {
 
         int id = 0;
 
-        String SQL = "select id, delete_time from users " +
-                "where login = ? and password = ? and delete_time is null ";
+        String SQL = "select id, delete_time from users " + "where login = ? and password = ? and delete_time is null ";
 
-        try (Connection connection = database.connection();
-             PreparedStatement statement = connection.prepareStatement(SQL)) {
+        try (Connection connection = database.connection(); PreparedStatement statement = connection.prepareStatement(SQL)) {
 
             statement.setString(1, user.getLogin());
             statement.setString(2, user.getPassword());
@@ -173,45 +160,30 @@ public class UsersDaoImpl implements UsersDao {
         return id;
     }
 
+    @Override
     public String deleteUserById(Integer id) {
 
         String selectSQL = "select * from users where id = ?";
-        String deleteSQL = "update comments " +
-                "set delete_time = ? " +
-                "where comments.user_id = ?; " +
+        String deleteSQL = "update comments " + "set delete_time = ? " + "where comments.user_id = ?; " +
 
-                "update evaluate_product " +
-                "set delete_time = ? " +
-                "where evaluate_product.user_id = ?; " +
+                "update evaluate_product " + "set delete_time = ? " + "where evaluate_product.user_id = ?; " +
 
-                "update comments " +
-                "set delete_time = ? " +
-                "where comments.product_id in (select id from products p " +
-                "where p.users_id = ?); " +
+                "update comments " + "set delete_time = ? " + "where comments.product_id in (select id from products p " + "where p.users_id = ?); " +
 
-                "update evaluate_product " +
-                "set delete_time = ? " +
-                "where evaluate_product.product_id in (select id from products p " +
-                "where p.users_id = ?); " +
+                "update evaluate_product " + "set delete_time = ? " + "where evaluate_product.product_id in (select id from products p " + "where p.users_id = ?); " +
 
-                "update products " +
-                "set delete_time = ? " +
-                "where users_id = ?; " +
+                "update products " + "set delete_time = ? " + "where users_id = ?; " +
 
-                "update users " +
-                "set delete_time = ? " +
-                "where id = ?; ";
+                "update users " + "set delete_time = ? " + "where id = ?; ";
 
 
-        try (Connection connection = database.connection();
-             PreparedStatement selectStatement = connection.prepareStatement(selectSQL);
-             PreparedStatement deleteStatement = connection.prepareStatement(deleteSQL)) {
+        try (Connection connection = database.connection(); PreparedStatement selectStatement = connection.prepareStatement(selectSQL); PreparedStatement deleteStatement = connection.prepareStatement(deleteSQL)) {
 
             selectStatement.setInt(1, id);
 
             ResultSet selectResult = selectStatement.executeQuery();
 
-            if(selectResult.next() && selectResult.getDate("delete_time") == null) {
+            if (selectResult.next() && selectResult.getDate("delete_time") == null) {
 
                 deleteStatement.setDate(1, new Date(System.currentTimeMillis()));
                 deleteStatement.setInt(2, id);
