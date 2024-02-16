@@ -18,8 +18,8 @@ public class UsersService {
         return dao.getAllUsers();
     }
 
-    public Integer createUser(String login, String password){
-        return dao.createUser(login, password);
+    public Integer createUser(UsersModel userToCreate){
+        return dao.createUser(userToCreate);
     }
 
     public PrivateUserModel getUserById(Integer id){

@@ -21,7 +21,7 @@ public class ProductsDaoImpl implements ProductsDao {
     private final DatabaseConfiguration database;
 
     @Override
-    public List<ProductsFeed> getProductsFeed() {
+    public List<ProductsFeed> getProductsFeed() throws NullPointerException{
 
         List<ProductsFeed> productsFeed = new ArrayList<>();
 
@@ -44,7 +44,7 @@ public class ProductsDaoImpl implements ProductsDao {
                 productsFeed.add(product);
             }
             if (productsFeed.isEmpty()) {
-                return null;
+                throw new NullPointerException();
             }
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
@@ -53,7 +53,7 @@ public class ProductsDaoImpl implements ProductsDao {
     }
 
     @Override
-    public ProductWithSeller getProductById(Integer id) {
+    public ProductWithSeller getProductById(Integer id) throws NullPointerException {
         ProductWithSeller product = null;
 
         String SQL = "select p.id, p.category, p.url_photo, p.fabric, p.size, p.description, u.login " +
@@ -77,6 +77,9 @@ public class ProductsDaoImpl implements ProductsDao {
                     product.setUsersName(resultSet.getString(7));
 
                 }
+                if(product == null){
+                    throw new NullPointerException();
+                }
             }
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
@@ -85,9 +88,9 @@ public class ProductsDaoImpl implements ProductsDao {
     }
 
     @Override
-    public Integer createProduct(ProductsModel product) {
+    public Integer createProduct(ProductsModel product) throws RuntimeException{
 
-        int productId = 0;
+        int productId = -1;
 
         String selectSQL = "select * from users where id = ?";
         String insertSQL = "insert into products (category, url_photo, fabric, size, description, users_id)" +
@@ -113,7 +116,8 @@ public class ProductsDaoImpl implements ProductsDao {
                 if (resultSet.next()) {
                     productId = resultSet.getInt(1);
                 }
-            } else return null;
+                else throw new RuntimeException("Failed to add product to database");
+            }
 
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
@@ -122,7 +126,7 @@ public class ProductsDaoImpl implements ProductsDao {
     }
 
     @Override
-    public List<ProductsModel> getProductByUserId(Integer id) {
+    public List<ProductsModel> getProductsByUserId(Integer id) throws NullPointerException{
 
         List<ProductsModel> products = new ArrayList<>();
 
@@ -151,7 +155,7 @@ public class ProductsDaoImpl implements ProductsDao {
                 products.add(product);
             }
             if (products.isEmpty()) {
-                return null;
+                throw new NullPointerException();
             }
 
         } catch (SQLException sqlException) {
@@ -161,7 +165,7 @@ public class ProductsDaoImpl implements ProductsDao {
     }
 
     @Override
-    public List<ProductsFeed> getAllProductsWithoutEvaluation(Integer userId) {
+    public List<ProductsFeed> getAllProductsWithoutEvaluation(Integer userId) throws NullPointerException{
         List<ProductsFeed> products = new ArrayList<>();
 
         String SQL = "select p.id, p.category, p.url_photo, u.login from products p " +
@@ -188,7 +192,7 @@ public class ProductsDaoImpl implements ProductsDao {
                 products.add(product);
             }
             if (products.isEmpty()) {
-                return null;
+                throw new NullPointerException();
             }
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
@@ -197,14 +201,14 @@ public class ProductsDaoImpl implements ProductsDao {
     }
 
     @Override
-    public List<MineProducts> getAllMineProducts(Integer userId) {
+    public List<MineProducts> getAllMineProducts(Integer userId) throws NullPointerException{
         List<MineProducts> products = new ArrayList<>();
 
         String SQL = "select p.id, p.category, p.url_photo, p.fabric, p.size, p.description, avg(ep.evaluate), count(distinct c.id) from products p " +
                 "join users u on p.users_id = u.id " +
                 "left join evaluate_product ep on p.id = ep.product_id " +
                 "left join comments c on p.id = c.product_id " +
-                "where p.users_id = ? and p.delete_time is null and ep.delete_time is null " +
+                "where p.users_id = ? and u.delete_time is null and p.delete_time is null and ep.delete_time is null " +
                 "group by p.id";
 
         try (Connection connection = database.connection();
@@ -229,7 +233,7 @@ public class ProductsDaoImpl implements ProductsDao {
                 products.add(product);
             }
             if (products.isEmpty()) {
-                return null;
+                throw new NullPointerException();
             }
 
         } catch (SQLException sqlException) {
@@ -239,7 +243,7 @@ public class ProductsDaoImpl implements ProductsDao {
     }
 
     @Override
-    public ProductsFeed getProductWithoutEvaluationRandomly(Integer userId) {
+    public ProductsFeed getProductWithoutEvaluationRandomly(Integer userId) throws NullPointerException{
         ProductsFeed product = null;
 
         String SQL = "select p.id, p.category, p.url_photo, u.login from products p " +
@@ -262,8 +266,8 @@ public class ProductsDaoImpl implements ProductsDao {
                     product.setUrlToPhoto(resultSet.getString(3));
                     product.setUsersName(resultSet.getString(4));
                 }
+                else throw new NullPointerException();
             }
-
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
@@ -271,7 +275,7 @@ public class ProductsDaoImpl implements ProductsDao {
     }
 
     @Override
-    public String updateProductById(Integer id, ProductsModel product) {
+    public String updateProductById(Integer id, ProductsModel product) throws NullPointerException{
 
         String selectSQL = "select * from products where id = ? ";
         String updateSQL = "update products " +
@@ -296,7 +300,7 @@ public class ProductsDaoImpl implements ProductsDao {
 
                 updateStatement.executeUpdate();
 
-            } else return null;
+            } else throw new NullPointerException();
 
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
@@ -305,7 +309,7 @@ public class ProductsDaoImpl implements ProductsDao {
     }
 
     @Override
-    public String deleteProductById(Integer id) {
+    public String deleteProductById(Integer id) throws NullPointerException{
 
         String selectSQL = "select * from products where id = ?";
 
@@ -339,7 +343,7 @@ public class ProductsDaoImpl implements ProductsDao {
                 deleteStatement.setInt(6, id);
 
                 deleteStatement.executeUpdate();
-            } else return null;
+            } else throw new NullPointerException();
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }

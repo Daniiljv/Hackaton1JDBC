@@ -16,8 +16,7 @@ public class EvaluationDaoImpl implements EvaluationDao {
     private final DatabaseConfiguration database;
 
     @Override
-    public Integer createEvaluation(EvaluationModel evaluation) {
-
+    public Integer createEvaluation(EvaluationModel evaluation) throws RuntimeException {
         int id = -1;
 
         String selectUserSQL = "select * from users where id = ? ";
@@ -36,7 +35,6 @@ public class EvaluationDaoImpl implements EvaluationDao {
             ResultSet userResult = userStatement.executeQuery();
             ResultSet productResult = productStatement.executeQuery();
 
-
             if (userResult.next() && productResult.next() &&
                     userResult.getDate("delete_time") == null &&
                     productResult.getDate("delete_time") == null) {
@@ -50,30 +48,30 @@ public class EvaluationDaoImpl implements EvaluationDao {
                 if (resultSet.next()) {
                     id = resultSet.getInt(1);
                 }
-            } else {
-                return null;
             }
         } catch (SQLException sqlException) {
-            System.out.println(sqlException.getMessage());
+            throw new RuntimeException("Failed to add evaluation to database", sqlException);
         }
         return id;
     }
 
     @Override
-    public Double getAvgEvaluation(Integer productId) {
-        double avgEvaluation = 0;
+    public Double getAvgEvaluation(Integer productId) throws NullPointerException {
+        Double avgEvaluation = null;
 
-        String SQL = "SELECT AVG(evaluate) FROM evaluate_product WHERE product_id = ? and delete_time is null ";
+        String SQL = "select avg(evaluate) from evaluate_product where product_id = ? and delete_time is null";
 
         try (Connection connection = database.connection();
              PreparedStatement statement = connection.prepareStatement(SQL)) {
 
             statement.setInt(1, productId);
-
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                avgEvaluation = resultSet.getInt(1);
+                avgEvaluation = resultSet.getDouble(1);
+                if (resultSet.wasNull()) {
+                    throw new NullPointerException();
+                }
             }
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
@@ -82,7 +80,7 @@ public class EvaluationDaoImpl implements EvaluationDao {
     }
 
     @Override
-    public String deleteEvaluationById(Integer id) {
+    public String deleteEvaluationById(Integer id) throws NullPointerException{
 
         String selectSQL = "select * from evaluate_product where id = ?";
         String deleteSQL = "update evaluate_product " +
@@ -101,7 +99,7 @@ public class EvaluationDaoImpl implements EvaluationDao {
                 deleteStatement.setInt(2, id);
 
                 deleteStatement.executeUpdate();
-            } else return null;
+            } else throw new NullPointerException();
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }

@@ -28,8 +28,8 @@ public class ProductsService {
         return dao.createProduct(product);
     }
 
-    public List<ProductsModel> getProductByUserId(Integer id){
-        return dao.getProductByUserId(id);
+    public List<ProductsModel> getProductsByUserId(Integer id){
+        return dao.getProductsByUserId(id);
     }
 
     public List<ProductsFeed> getAllProductsWithoutEvaluation(Integer userId){

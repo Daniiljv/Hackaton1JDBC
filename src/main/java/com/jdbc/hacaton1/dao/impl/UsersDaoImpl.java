@@ -4,6 +4,7 @@ import com.jdbc.hacaton1.dao.UsersDao;
 import com.jdbc.hacaton1.databaseConfig.DatabaseConfiguration;
 import com.jdbc.hacaton1.models.PrivateUserModel;
 import com.jdbc.hacaton1.models.UsersModel;
+import com.sun.jdi.request.DuplicateRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +20,9 @@ public class UsersDaoImpl implements UsersDao {
     private final DatabaseConfiguration database;
 
     @Override
-    public List<UsersModel> getAllUsers() {
-        String SQL = "select * from users u " + "where u.delete_time is null ";
+    public List<UsersModel> getAllUsers() throws NullPointerException{
+        String SQL = "select * from users u " +
+                     "where u.delete_time is null ";
         List<UsersModel> users = new ArrayList<>();
 
         try (Connection connection = database.connection(); Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -36,7 +38,7 @@ public class UsersDaoImpl implements UsersDao {
                 users.add(user);
             }
             if (users.isEmpty()) {
-                return null;
+                throw new NullPointerException();
             }
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
@@ -45,28 +47,28 @@ public class UsersDaoImpl implements UsersDao {
     }
 
     @Override
-    public Integer createUser(String login, String password) {
+    public Integer createUser(UsersModel userToCreate) throws DuplicateRequestException{
         int userId = -1;
 
         String insertSQL = "insert into users (login, password) values (?, ?) returning id";
 
         try (Connection connection = database.connection(); PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
 
-            preparedStatement.setString(1, login);
-            preparedStatement.setString(2, password);
+            preparedStatement.setString(1, userToCreate.getLogin());
+            preparedStatement.setString(2, userToCreate.getPassword());
 
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 userId = resultSet.getInt(1);
             }
         } catch (SQLException sqlException) {
-            System.out.println(sqlException.getMessage());
-        }
+                throw new RuntimeException("Failed to add user to database", sqlException);
+            }
         return userId;
     }
 
     @Override
-    public PrivateUserModel getUserById(Integer id) {
+    public PrivateUserModel getUserById(Integer id) throws NullPointerException {
 
         PrivateUserModel user = null;
 
@@ -84,6 +86,10 @@ public class UsersDaoImpl implements UsersDao {
                 user.setRate(resultSet.getInt(3));
             }
 
+            if(user == null){
+                throw new NullPointerException();
+            }
+
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
@@ -91,7 +97,7 @@ public class UsersDaoImpl implements UsersDao {
     }
 
     @Override
-    public String updateUserById(Integer id, UsersModel user) {
+    public String updateUserById(Integer id, UsersModel user) throws NullPointerException{
 
         String selectSQL = "select * from users where id = ?";
         String updateSQL = "update users " + "set login = ?, password = ? " + "where id = ? and delete_time is null ";
@@ -107,15 +113,15 @@ public class UsersDaoImpl implements UsersDao {
                 updateStatement.setInt(3, id);
 
                 updateStatement.executeUpdate();
-            } else return null;
+            } else throw new NullPointerException();
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
-        return "User with id " + id + " is updated";
+        return "User with id " + id + " updated!";
     }
 
     @Override
-    public String updateUsersRateById(Integer id, Integer rate) {
+    public String updateUsersRateById(Integer id, Integer rate) throws NullPointerException{
 
         String selectSQL = "select * from users where id = ?";
         String updateSQL = "update users " + "set rate = ? " + "where id = ? and delete_time is null ";
@@ -130,7 +136,7 @@ public class UsersDaoImpl implements UsersDao {
                 updateStatement.setInt(2, id);
 
                 updateStatement.executeUpdate();
-            } else return null;
+            } else throw new NullPointerException();
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
@@ -138,7 +144,7 @@ public class UsersDaoImpl implements UsersDao {
     }
 
     @Override
-    public Integer getIdByLoginAndPassword(UsersModel user) {
+    public Integer getIdByLoginAndPassword(UsersModel user) throws NullPointerException{
 
         int id = 0;
 
@@ -152,7 +158,7 @@ public class UsersDaoImpl implements UsersDao {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next() && resultSet.getDate("delete_time") == null) {
                 id = resultSet.getInt(1);
-            } else return null;
+            } else throw new NullPointerException();
 
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
@@ -161,7 +167,7 @@ public class UsersDaoImpl implements UsersDao {
     }
 
     @Override
-    public String deleteUserById(Integer id) {
+    public String deleteUserById(Integer id) throws NullPointerException{
 
         String selectSQL = "select * from users where id = ?";
         String deleteSQL = "update comments " + "set delete_time = ? " + "where comments.user_id = ?; " +
@@ -199,7 +205,7 @@ public class UsersDaoImpl implements UsersDao {
                 deleteStatement.setInt(12, id);
 
                 deleteStatement.executeUpdate();
-            } else return null;
+            } else throw new NullPointerException();
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }

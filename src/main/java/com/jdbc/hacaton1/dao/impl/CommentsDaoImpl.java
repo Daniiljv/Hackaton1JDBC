@@ -20,8 +20,8 @@ public class CommentsDaoImpl implements CommentsDao {
     private final DatabaseConfiguration database;
 
     @Override
-    public Integer createComment(CommentsModel comment) {
-        int commentId = 0;
+    public Integer createComment(CommentsModel comment) throws RuntimeException{
+        int commentId = -1;
 
         String selectUserSQL = "select * from users where id = ? ";
         String selectProductSQL = "select * from products where id = ? ";
@@ -53,15 +53,15 @@ public class CommentsDaoImpl implements CommentsDao {
                 if (resultSet.next()) {
                     commentId = resultSet.getInt(1);
                 }
-            } else return null;
+            }
         } catch (SQLException sqlException) {
-            System.out.println(sqlException.getMessage());
+            throw new RuntimeException("Failed to add comment to database");
         }
         return commentId;
     }
 
     @Override
-    public List<GeneralComments> getCommentsByProductId(Integer id) {
+    public List<GeneralComments> getCommentsByProductId(Integer id) throws NullPointerException {
 
         List<GeneralComments> comments = new ArrayList<>();
 
@@ -89,7 +89,7 @@ public class CommentsDaoImpl implements CommentsDao {
                 comments.add(comment);
             }
             if (comments.isEmpty()) {
-                return null;
+                throw new NullPointerException();
             }
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
@@ -98,7 +98,7 @@ public class CommentsDaoImpl implements CommentsDao {
     }
 
     @Override
-    public List<GeneralComments> getCommentsByUserId(Integer id) {
+    public List<GeneralComments> getCommentsByUserId(Integer id) throws NullPointerException{
 
         List<GeneralComments> comments = new ArrayList<>();
 
@@ -125,7 +125,7 @@ public class CommentsDaoImpl implements CommentsDao {
                 comments.add(comment);
             }
             if (comments.isEmpty()) {
-                return null;
+                throw new NullPointerException();
             }
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
@@ -134,7 +134,7 @@ public class CommentsDaoImpl implements CommentsDao {
     }
 
     @Override
-    public String updateCommentsLikesDislikesById(Integer id, CommentsModel comment) {
+    public String updateCommentsLikesDislikesById(Integer id, CommentsModel comment) throws NullPointerException {
 
         String selectSQL = "select * from comments where id = ?";
         String updateSQL = "update comments " +
@@ -155,7 +155,7 @@ public class CommentsDaoImpl implements CommentsDao {
                 updateStatement.setInt(3, id);
 
                 updateStatement.executeUpdate();
-            } else return null;
+            } else throw new NullPointerException();
 
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
@@ -164,7 +164,7 @@ public class CommentsDaoImpl implements CommentsDao {
     }
 
     @Override
-    public String updateCommentById(Integer id, String comment) {
+    public String updateCommentById(Integer id, String comment) throws NullPointerException{
 
         String selectSQL = "select * from comments where id = ?";
         String updateSQL = "update comments " +
@@ -183,7 +183,7 @@ public class CommentsDaoImpl implements CommentsDao {
                 updateStatement.setInt(2, id);
 
                 updateStatement.executeUpdate();
-            } else return null;
+            } else throw new NullPointerException();
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
@@ -191,7 +191,7 @@ public class CommentsDaoImpl implements CommentsDao {
     }
 
     @Override
-    public String deleteCommentById(Integer id) {
+    public String deleteCommentById(Integer id) throws NullPointerException {
 
         String selectSQL = "select * from comments where id = ?";
         String deleteSQL = "update comments " +
@@ -211,7 +211,7 @@ public class CommentsDaoImpl implements CommentsDao {
                 deleteStatement.setInt(2, id);
 
                 deleteStatement.executeUpdate();
-            } else return null;
+            } else throw new NullPointerException();
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }

@@ -9,7 +9,7 @@ public interface UsersDao {
 
     List<UsersModel> getAllUsers();
 
-    Integer createUser(String login, String password);
+    Integer createUser(UsersModel userToCreate);
 
     PrivateUserModel getUserById(Integer id);
 

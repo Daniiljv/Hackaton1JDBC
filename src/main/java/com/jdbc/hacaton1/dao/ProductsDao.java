@@ -16,7 +16,7 @@ public interface ProductsDao {
 
     Integer createProduct(ProductsModel product);
 
-    List<ProductsModel> getProductByUserId(Integer id);
+    List<ProductsModel> getProductsByUserId(Integer id);
 
     List<ProductsFeed> getAllProductsWithoutEvaluation(Integer userId);
 
