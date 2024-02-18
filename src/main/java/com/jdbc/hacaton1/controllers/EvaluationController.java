@@ -7,6 +7,7 @@ import com.jdbc.hacaton1.models.responseMessageAPI.ResponseMessageAPI;
 import com.jdbc.hacaton1.services.EvaluationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,8 @@ public class EvaluationController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Failed to add evaluation to database",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Integer.class))})
     })
     @Operation(summary = "This road creates evaluate")
     @PostMapping("create")
@@ -59,7 +61,8 @@ public class EvaluationController {
             @ApiResponse(
                     responseCode = "404",
                     description = "The product doesn't have any evaluations",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Double.class))})
     })
     @Operation(summary = "This road returns average evaluation by product id")
     @GetMapping("getAvgEvaluationByProductId/{id}")
@@ -90,7 +93,8 @@ public class EvaluationController {
             @ApiResponse(
                     responseCode = "404",
                     description = "There isn't any evaluation with this id",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = String.class))})
     })
     @Operation(summary = "This road deletes evaluation by id")
     @DeleteMapping("deleteById")

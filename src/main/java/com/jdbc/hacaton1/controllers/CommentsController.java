@@ -7,7 +7,9 @@ import com.jdbc.hacaton1.models.GeneralComments;
 import com.jdbc.hacaton1.models.responseMessageAPI.ResponseMessageAPI;
 import com.jdbc.hacaton1.services.CommentsService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +33,8 @@ public class CommentsController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Failed to add comment to database",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Integer.class))})
     })
     @Operation(summary = "This road creates comment")
     @PostMapping("create")
@@ -62,7 +65,8 @@ public class CommentsController {
             @ApiResponse(
                     responseCode = "404",
                     description = "There are not any comments for this product",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = GeneralComments.class)))})
     })
     @Operation(summary = "This road returns all comments for special product by product id")
     @GetMapping("getByProductId/{id}")
@@ -93,7 +97,8 @@ public class CommentsController {
             @ApiResponse(
                     responseCode = "404",
                     description = "There are not any comments left by user",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = GeneralComments.class)))})
     })
     @Operation(summary = "This road returns all comments of special user by users id")
     @GetMapping("getByUserId/{id}")
@@ -124,7 +129,8 @@ public class CommentsController {
             @ApiResponse(
                     responseCode = "404",
                     description = "There are not any comments with this id",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = String.class))})
     })
     @Operation(summary = "This road updates count of likes and dislikes")
     @PutMapping("updateLikesDislikesById")
@@ -155,7 +161,8 @@ public class CommentsController {
             @ApiResponse(
                     responseCode = "404",
                     description = "There are not any comments with this id",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = String.class))})
     })
     @Operation(summary = "This road updates text of the special comment")
     @PutMapping("updateCommentById")
@@ -186,7 +193,8 @@ public class CommentsController {
             @ApiResponse(
                     responseCode = "404",
                     description = "There are not any comments with this id",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = String.class))})
     })
     @Operation(summary = "This road deletes comment by id")
     @DeleteMapping("delete")

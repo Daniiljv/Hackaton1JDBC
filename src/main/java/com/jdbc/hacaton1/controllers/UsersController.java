@@ -8,7 +8,9 @@ import com.jdbc.hacaton1.models.responseMessageAPI.ResponseMessageAPI;
 import com.jdbc.hacaton1.models.UsersModel;
 import com.jdbc.hacaton1.services.UsersService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,9 +33,10 @@ public class UsersController {
             @ApiResponse(
                     responseCode = "404",
                     description = "There aren't any users",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = UsersModel.class)))})
     })
-    @Operation(summary = "This road returns list of all users")
+    @Operation(summary = "This road returns list of all active users")
     @GetMapping("getAll")
     private ResponseMessageAPI<List<UsersModel>> getAllUsers() {
         try {
@@ -61,7 +64,8 @@ public class UsersController {
             @ApiResponse(
                     responseCode = "404",
                     description = "There isn't any users with this id",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = PrivateUserModel.class))})
     })
     @Operation(summary = "This road returns user with special id")
     @GetMapping("getById/{id}")
@@ -92,14 +96,16 @@ public class UsersController {
             @ApiResponse(
                     responseCode = "404",
                     description = "There isn't any users with this login and password",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Integer.class))})
     })
-    @Operation(summary = "This road returns users id with special log and password")
-    @GetMapping("getIdByLoginAndPassword")
-    public ResponseMessageAPI<Integer> getIdByLoginAndPassword(@RequestBody UsersModel user) {
+    @Operation(summary = "This road returns users id with special login and password")
+    @GetMapping("getIdByLoginAndPassword/{login}/{password}")
+    public ResponseMessageAPI<Integer> getIdByLoginAndPassword(@PathVariable String login,
+                                                               @PathVariable String password) {
         try{
             return new ResponseMessageAPI<>(
-                    service.getIdByLoginAndPassword(user),
+                    service.getIdByLoginAndPassword(login, password),
                     ResultCodeAPI.SUCCESS,
                     null,
                     "success",
@@ -121,9 +127,10 @@ public class UsersController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Failed to add user to database",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Integer.class))})
     })
-    @Operation(summary = "This road creates user by unique login and password")
+    @Operation(summary = "This road creates user by unique login, password and unique emailAddress")
     @PostMapping("create")
     public ResponseMessageAPI<Integer> createUser(@RequestBody UsersModel userToCreate) {
         try{
@@ -151,7 +158,8 @@ public class UsersController {
             @ApiResponse(
                     responseCode = "404",
                     description = "User with special id is not found",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = String.class))})
     })
     @Operation(summary = "This road updates user by special id")
     @PutMapping("updateById")
@@ -181,7 +189,8 @@ public class UsersController {
             @ApiResponse(
                     responseCode = "404",
                     description = "User with special id is not found",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = String.class))})
     })
     @Operation(summary = "This road updates users rate by special id")
     @PutMapping("updateRateById")
@@ -210,7 +219,8 @@ public class UsersController {
             @ApiResponse(
                     responseCode = "404",
                     description = "User with special id is not found",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = String.class))})
     })
     @Operation(summary = "This road deletes user by special id")
     @DeleteMapping("delete")

@@ -1,4 +1,4 @@
-package com.jdbc.hacaton1.util;
+package com.jdbc.hacaton1.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -15,7 +15,7 @@ public class SwaggerConfig {
                 .info(new Info()
                         .title("Hackaton#1")
                         .description("Web app for evaluating clothes")
-                        .version("1.0.9")
+                        .version("1.1.0")
                         .contact(new Contact().name("Daniil")
                         .email("k.daniil2023@gmail.com")));
     }

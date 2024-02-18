@@ -14,5 +14,6 @@ public class UsersModel {
     private String login;
     private String password;
     private Integer rate;
+    private String mailAddress;
 
 }

@@ -32,8 +32,8 @@ public class UsersService {
     public String updateUsersRateById(Integer id, Integer rate){
         return dao.updateUsersRateById(id, rate);
     }
-    public Integer getIdByLoginAndPassword(UsersModel user){
-        return dao.getIdByLoginAndPassword(user);
+    public Integer getIdByLoginAndPassword(String login, String password){
+        return dao.getIdByLoginAndPassword(login, password);
     }
     public String deleteUserById(Integer id){
         return dao.deleteUserById(id);

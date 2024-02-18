@@ -168,31 +168,38 @@ public class ProductsDaoImpl implements ProductsDao {
     public List<ProductsFeed> getAllProductsWithoutEvaluation(Integer userId) throws NullPointerException{
         List<ProductsFeed> products = new ArrayList<>();
 
-        String SQL = "select p.id, p.category, p.url_photo, u.login from products p " +
+        String select = "select delete_time from users where id = ?";
+        String findSQL = "select p.id, p.category, p.url_photo, u.login from products p " +
                 "join users u on u.id = p.users_id " +
                 "left join evaluate_product ep on ep.product_id = p.id and ep.user_id = ? " +
                 "where ep.id is null and p.users_id != ? and p.delete_time is null ";
 
         try (Connection connection = database.connection();
-             PreparedStatement statement = connection.prepareStatement(SQL)) {
+             PreparedStatement selectStatement = connection.prepareStatement(select);
+             PreparedStatement statement = connection.prepareStatement(findSQL)) {
 
-            statement.setInt(1, userId);
-            statement.setInt(2, userId);
+            selectStatement.setInt(1, userId);
+            ResultSet selectResult = selectStatement.executeQuery();
+            if(selectResult.next() && selectResult.getDate("delete_time") == null) {
 
-            ResultSet resultSet = statement.executeQuery();
+                statement.setInt(1, userId);
+                statement.setInt(2, userId);
 
-            while (resultSet.next()) {
-                ProductsFeed product = new ProductsFeed();
+                ResultSet resultSet = statement.executeQuery();
 
-                product.setId(resultSet.getInt(1));
-                product.setCategory(resultSet.getString(2));
-                product.setUrlToPhoto(resultSet.getString(3));
-                product.setUsersName(resultSet.getString(4));
+                while (resultSet.next()) {
+                    ProductsFeed product = new ProductsFeed();
 
-                products.add(product);
-            }
-            if (products.isEmpty()) {
-                throw new NullPointerException();
+                    product.setId(resultSet.getInt(1));
+                    product.setCategory(resultSet.getString(2));
+                    product.setUrlToPhoto(resultSet.getString(3));
+                    product.setUsersName(resultSet.getString(4));
+
+                    products.add(product);
+                }
+                if (products.isEmpty()) {
+                    throw new NullPointerException();
+                }
             }
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
@@ -204,11 +211,13 @@ public class ProductsDaoImpl implements ProductsDao {
     public List<MineProducts> getAllMineProducts(Integer userId) throws NullPointerException{
         List<MineProducts> products = new ArrayList<>();
 
-        String SQL = "select p.id, p.category, p.url_photo, p.fabric, p.size, p.description, avg(ep.evaluate), count(distinct c.id) from products p " +
+        String SQL = "select p.id, p.category, p.url_photo, p.fabric, p.size, p.description," +
+                " avg(ep.evaluate), count(distinct c.id) from products p " +
                 "join users u on p.users_id = u.id " +
                 "left join evaluate_product ep on p.id = ep.product_id " +
                 "left join comments c on p.id = c.product_id " +
-                "where p.users_id = ? and u.delete_time is null and p.delete_time is null and ep.delete_time is null " +
+                "where p.users_id = ? and u.delete_time is null and " +
+                "p.delete_time is null and ep.delete_time is null and c.delete_time is null " +
                 "group by p.id";
 
         try (Connection connection = database.connection();
@@ -246,27 +255,33 @@ public class ProductsDaoImpl implements ProductsDao {
     public ProductsFeed getProductWithoutEvaluationRandomly(Integer userId) throws NullPointerException{
         ProductsFeed product = null;
 
-        String SQL = "select p.id, p.category, p.url_photo, u.login from products p " +
+        String select = "select delete_time from users where id = ?";
+        String findSQL = "select p.id, p.category, p.url_photo, u.login from products p " +
                 "join users u on u.id = p.users_id " +
                 "left join evaluate_product ep on ep.product_id = p.id and ep.user_id = ? " +
                 "where ep.id is null and p.users_id != ? and p.delete_time is null " +
                 "order by random() limit 1";
 
         try (Connection connection = database.connection();
-             PreparedStatement statement = connection.prepareStatement(SQL)) {
+             PreparedStatement selectStatement = connection.prepareStatement(select);
+             PreparedStatement statement = connection.prepareStatement(findSQL)) {
 
-            statement.setInt(1, userId);
-            statement.setInt(2, userId);
+            selectStatement.setInt(1, userId);
+            ResultSet selectResult = selectStatement.executeQuery();
+            if(selectResult.next() && selectResult.getDate("delete_time") == null) {
 
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    product = new ProductsFeed();
-                    product.setId(resultSet.getInt(1));
-                    product.setCategory(resultSet.getString(2));
-                    product.setUrlToPhoto(resultSet.getString(3));
-                    product.setUsersName(resultSet.getString(4));
+                statement.setInt(1, userId);
+                statement.setInt(2, userId);
+
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        product = new ProductsFeed();
+                        product.setId(resultSet.getInt(1));
+                        product.setCategory(resultSet.getString(2));
+                        product.setUrlToPhoto(resultSet.getString(3));
+                        product.setUsersName(resultSet.getString(4));
+                    } else throw new NullPointerException();
                 }
-                else throw new NullPointerException();
             }
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());

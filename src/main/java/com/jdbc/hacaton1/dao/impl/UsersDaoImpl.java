@@ -4,7 +4,7 @@ import com.jdbc.hacaton1.dao.UsersDao;
 import com.jdbc.hacaton1.databaseConfig.DatabaseConfiguration;
 import com.jdbc.hacaton1.models.PrivateUserModel;
 import com.jdbc.hacaton1.models.UsersModel;
-import com.sun.jdi.request.DuplicateRequestException;
+import com.jdbc.hacaton1.services.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +18,12 @@ import java.util.List;
 public class UsersDaoImpl implements UsersDao {
 
     private final DatabaseConfiguration database;
+    private final MailService mailService;
 
     @Override
-    public List<UsersModel> getAllUsers() throws NullPointerException{
+    public List<UsersModel> getAllUsers() throws NullPointerException {
         String SQL = "select * from users u " +
-                     "where u.delete_time is null ";
+                "where u.delete_time is null ";
         List<UsersModel> users = new ArrayList<>();
 
         try (Connection connection = database.connection(); Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -34,6 +35,7 @@ public class UsersDaoImpl implements UsersDao {
                 user.setLogin(resultSet.getString(2));
                 user.setPassword(resultSet.getString(3));
                 user.setRate(resultSet.getInt(4));
+                user.setMailAddress(resultSet.getString(6));
 
                 users.add(user);
             }
@@ -47,23 +49,27 @@ public class UsersDaoImpl implements UsersDao {
     }
 
     @Override
-    public Integer createUser(UsersModel userToCreate) throws DuplicateRequestException{
+    public Integer createUser(UsersModel userToCreate) throws RuntimeException {
         int userId = -1;
 
-        String insertSQL = "insert into users (login, password) values (?, ?) returning id";
+        String insertSQL = "insert into users (login, password, mail_address) values (?, ?, ?) returning id";
 
-        try (Connection connection = database.connection(); PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
+        try (Connection connection = database.connection();
+             PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
 
             preparedStatement.setString(1, userToCreate.getLogin());
             preparedStatement.setString(2, userToCreate.getPassword());
+            preparedStatement.setString(3, userToCreate.getMailAddress());
 
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 userId = resultSet.getInt(1);
+
+                mailService.sendEmailForRegistration(userToCreate, userId);
             }
         } catch (SQLException sqlException) {
-                throw new RuntimeException("Failed to add user to database", sqlException);
-            }
+            throw new RuntimeException();
+        }
         return userId;
     }
 
@@ -86,7 +92,7 @@ public class UsersDaoImpl implements UsersDao {
                 user.setRate(resultSet.getInt(3));
             }
 
-            if(user == null){
+            if (user == null) {
                 throw new NullPointerException();
             }
 
@@ -97,12 +103,16 @@ public class UsersDaoImpl implements UsersDao {
     }
 
     @Override
-    public String updateUserById(Integer id, UsersModel user) throws NullPointerException{
+    public String updateUserById(Integer id, UsersModel user) throws NullPointerException {
 
         String selectSQL = "select * from users where id = ?";
-        String updateSQL = "update users " + "set login = ?, password = ? " + "where id = ? and delete_time is null ";
+        String updateSQL = "update users " +
+                "set login = ?, password = ? , mail_address = ?" +
+                "where id = ? and delete_time is null ";
 
-        try (Connection connection = database.connection(); PreparedStatement selectStatement = connection.prepareStatement(selectSQL); PreparedStatement updateStatement = connection.prepareStatement(updateSQL)) {
+        try (Connection connection = database.connection();
+             PreparedStatement selectStatement = connection.prepareStatement(selectSQL);
+             PreparedStatement updateStatement = connection.prepareStatement(updateSQL)) {
 
             selectStatement.setInt(1, id);
             ResultSet selectResult = selectStatement.executeQuery();
@@ -110,7 +120,8 @@ public class UsersDaoImpl implements UsersDao {
 
                 updateStatement.setString(1, user.getLogin());
                 updateStatement.setString(2, user.getPassword());
-                updateStatement.setInt(3, id);
+                updateStatement.setString(3, user.getMailAddress());
+                updateStatement.setInt(4, id);
 
                 updateStatement.executeUpdate();
             } else throw new NullPointerException();
@@ -121,7 +132,7 @@ public class UsersDaoImpl implements UsersDao {
     }
 
     @Override
-    public String updateUsersRateById(Integer id, Integer rate) throws NullPointerException{
+    public String updateUsersRateById(Integer id, Integer rate) throws NullPointerException {
 
         String selectSQL = "select * from users where id = ?";
         String updateSQL = "update users " + "set rate = ? " + "where id = ? and delete_time is null ";
@@ -144,7 +155,7 @@ public class UsersDaoImpl implements UsersDao {
     }
 
     @Override
-    public Integer getIdByLoginAndPassword(UsersModel user) throws NullPointerException{
+    public Integer getIdByLoginAndPassword(String login, String password) throws NullPointerException {
 
         int id = 0;
 
@@ -152,8 +163,8 @@ public class UsersDaoImpl implements UsersDao {
 
         try (Connection connection = database.connection(); PreparedStatement statement = connection.prepareStatement(SQL)) {
 
-            statement.setString(1, user.getLogin());
-            statement.setString(2, user.getPassword());
+            statement.setString(1, login);
+            statement.setString(2, password);
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next() && resultSet.getDate("delete_time") == null) {
@@ -167,7 +178,9 @@ public class UsersDaoImpl implements UsersDao {
     }
 
     @Override
-    public String deleteUserById(Integer id) throws NullPointerException{
+    public String deleteUserById(Integer id) throws NullPointerException {
+        String login;
+        String mailAddress;
 
         String selectSQL = "select * from users where id = ?";
         String deleteSQL = "update comments " + "set delete_time = ? " + "where comments.user_id = ?; " +
@@ -191,6 +204,9 @@ public class UsersDaoImpl implements UsersDao {
 
             if (selectResult.next() && selectResult.getDate("delete_time") == null) {
 
+                login = selectResult.getString(2);
+                mailAddress = selectResult.getString(6);
+
                 deleteStatement.setDate(1, new Date(System.currentTimeMillis()));
                 deleteStatement.setInt(2, id);
                 deleteStatement.setDate(3, new Date(System.currentTimeMillis()));
@@ -205,6 +221,8 @@ public class UsersDaoImpl implements UsersDao {
                 deleteStatement.setInt(12, id);
 
                 deleteStatement.executeUpdate();
+
+                mailService.informUserAboutDelete(login, mailAddress);
             } else throw new NullPointerException();
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());

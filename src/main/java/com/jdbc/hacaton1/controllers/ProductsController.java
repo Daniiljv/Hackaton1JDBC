@@ -9,7 +9,9 @@ import com.jdbc.hacaton1.models.ProductsModel;
 import com.jdbc.hacaton1.models.responseMessageAPI.ResponseMessageAPI;
 import com.jdbc.hacaton1.services.ProductsService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +35,8 @@ public class ProductsController {
             @ApiResponse(
                     responseCode = "404",
                     description = "There is no any products",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = ProductsFeed.class)))})
     })
     @Operation(summary = "This road returns products feed")
    @GetMapping("getFeed")
@@ -64,7 +67,8 @@ public class ProductsController {
             @ApiResponse(
                     responseCode = "404",
                     description = "There is no any products with this id",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = ProductWithSeller.class)))})
     })
     @Operation(summary = "This road returns product with special id")
    @GetMapping("getById/{id}")
@@ -95,7 +99,8 @@ public class ProductsController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Failed to add product to database",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Integer.class))})
     })
     @Operation(summary = "This road creates product")
    @PostMapping("create")
@@ -125,7 +130,8 @@ public class ProductsController {
             @ApiResponse(
                     responseCode = "404",
                     description = "User doesn't have any products",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = ProductsModel.class)))})
     })
     @Operation(summary = "This road returns list of users products")
    @GetMapping("getByUserId/{id}")
@@ -156,7 +162,8 @@ public class ProductsController {
             @ApiResponse(
                     responseCode = "404",
                     description = "There are not any products without evaluation",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = ProductsFeed.class)))})
     })
     @Operation(summary = "This road returns all products without users evaluate")
    @GetMapping("getAllWithoutEvaluation/{userId}")
@@ -187,7 +194,8 @@ public class ProductsController {
             @ApiResponse(
                     responseCode = "404",
                     description = "You don't have any products yet",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = MineProducts.class)))})
     })
     @Operation(summary = "This road returns all YOURs products by your id")
    @GetMapping("getAllMine/{userId}")
@@ -217,7 +225,8 @@ public class ProductsController {
             @ApiResponse(
                     responseCode = "404",
                     description = "There is not any product without evaluation",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = ProductsFeed.class)))})
     })
     @Operation(summary = "This road returns one random product without users evaluate")
    @GetMapping("getWithoutEvaluationRandomly/{userId}")
@@ -248,7 +257,8 @@ public class ProductsController {
             @ApiResponse(
                     responseCode = "404",
                     description = "There are not any products with this id",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = String.class))})
     })
     @Operation(summary = "This road updates product by special id")
    @PutMapping("updateById")
@@ -279,7 +289,8 @@ public class ProductsController {
             @ApiResponse(
                     responseCode = "404",
                     description = "There isn't any products with this id",
-                    content = {@Content(mediaType = "application/json")})
+                    content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = String.class))})
     })
     @Operation(summary = "This road deletes product by special id")
    @DeleteMapping("delete")
