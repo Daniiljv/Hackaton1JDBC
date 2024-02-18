@@ -25,16 +25,17 @@ public class EvaluationController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Evaluation created successfully ",
-                    content = {@Content(mediaType = "application/json")}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Integer.class))}),
             @ApiResponse(
                     responseCode = "400",
                     description = "Failed to add evaluation to database",
                     content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = Integer.class))})
+                            schema = @Schema(implementation = Integer.class))})
     })
     @Operation(summary = "This road creates evaluate")
     @PostMapping("create")
-    public ResponseMessageAPI<Integer> createEvaluation(@RequestBody EvaluationModel evaluation){
+    public ResponseMessageAPI<Integer> createEvaluation(@RequestBody EvaluationModel evaluation) {
         try {
             return new ResponseMessageAPI<>(
                     service.createEvaluation(evaluation),
@@ -57,16 +58,17 @@ public class EvaluationController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Avg evaluation returned successfully ",
-                    content = {@Content(mediaType = "application/json")}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Double.class))}),
             @ApiResponse(
                     responseCode = "404",
                     description = "The product doesn't have any evaluations",
                     content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = Double.class))})
+                            schema = @Schema(implementation = Double.class))})
     })
     @Operation(summary = "This road returns average evaluation by product id")
     @GetMapping("getAvgEvaluationByProductId/{id}")
-        public ResponseMessageAPI<Double> getAvgEvaluation(@PathVariable Integer id){
+    public ResponseMessageAPI<Double> getAvgEvaluation(@PathVariable Integer id) {
         try {
             return new ResponseMessageAPI<>(
                     service.getAvgEvaluation(id),
@@ -89,16 +91,17 @@ public class EvaluationController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Evaluation deleted successfully ",
-                    content = {@Content(mediaType = "application/json")}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class))}),
             @ApiResponse(
                     responseCode = "404",
                     description = "There isn't any evaluation with this id",
                     content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = String.class))})
+                            schema = @Schema(implementation = String.class))})
     })
     @Operation(summary = "This road deletes evaluation by id")
     @DeleteMapping("deleteById")
-    public ResponseMessageAPI<String> deleteEvaluationById(@RequestParam Integer id){
+    public ResponseMessageAPI<String> deleteEvaluationById(@RequestParam Integer id) {
         try {
             return new ResponseMessageAPI<>(
                     service.deleteEvaluationById(id),

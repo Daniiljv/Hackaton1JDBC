@@ -29,7 +29,8 @@ public class CommentsController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Comment created successfully ",
-                    content = {@Content(mediaType = "application/json")}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Integer.class))}),
             @ApiResponse(
                     responseCode = "400",
                     description = "Failed to add comment to database",
@@ -38,7 +39,7 @@ public class CommentsController {
     })
     @Operation(summary = "This road creates comment")
     @PostMapping("create")
-    public ResponseMessageAPI<Integer> createComment(@RequestBody CommentsModel comment){
+    public ResponseMessageAPI<Integer> createComment(@RequestBody CommentsModel comment) {
         try {
             return new ResponseMessageAPI<>(
                     service.createComment(comment),
@@ -61,16 +62,17 @@ public class CommentsController {
             @ApiResponse(
                     responseCode = "200",
                     description = "All comments of product returned successfully ",
-                    content = {@Content(mediaType = "application/json")}),
+                    content = {@Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = GeneralComments.class)))}),
             @ApiResponse(
                     responseCode = "404",
                     description = "There are not any comments for this product",
                     content = {@Content(mediaType = "application/json",
-                    array = @ArraySchema(schema = @Schema(implementation = GeneralComments.class)))})
+                            array = @ArraySchema(schema = @Schema(implementation = GeneralComments.class)))})
     })
     @Operation(summary = "This road returns all comments for special product by product id")
     @GetMapping("getByProductId/{id}")
-    public ResponseMessageAPI<List<GeneralComments>> getCommentsByProductId(@PathVariable Integer id){
+    public ResponseMessageAPI<List<GeneralComments>> getCommentsByProductId(@PathVariable Integer id) {
         try {
             return new ResponseMessageAPI<>(
                     service.getCommentsByProductId(id),
@@ -93,16 +95,17 @@ public class CommentsController {
             @ApiResponse(
                     responseCode = "200",
                     description = "All users comments returned successfully ",
-                    content = {@Content(mediaType = "application/json")}),
+                    content = {@Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = GeneralComments.class)))}),
             @ApiResponse(
                     responseCode = "404",
                     description = "There are not any comments left by user",
                     content = {@Content(mediaType = "application/json",
-                    array = @ArraySchema(schema = @Schema(implementation = GeneralComments.class)))})
+                            array = @ArraySchema(schema = @Schema(implementation = GeneralComments.class)))})
     })
     @Operation(summary = "This road returns all comments of special user by users id")
     @GetMapping("getByUserId/{id}")
-    public ResponseMessageAPI<List<GeneralComments>> getCommentsByUserId(@PathVariable Integer id){
+    public ResponseMessageAPI<List<GeneralComments>> getCommentsByUserId(@PathVariable Integer id) {
         try {
             return new ResponseMessageAPI<>(
                     service.getCommentsByUserId(id),
@@ -125,16 +128,17 @@ public class CommentsController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Comments likes and dislikes updated successfully ",
-                    content = {@Content(mediaType = "application/json")}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class))}),
             @ApiResponse(
                     responseCode = "404",
                     description = "There are not any comments with this id",
                     content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = String.class))})
+                            schema = @Schema(implementation = String.class))})
     })
     @Operation(summary = "This road updates count of likes and dislikes")
     @PutMapping("updateLikesDislikesById")
-    public ResponseMessageAPI<String> updateCommentsLikesDislikesById(@RequestParam Integer id, @RequestBody CommentsModel comment){
+    public ResponseMessageAPI<String> updateCommentsLikesDislikesById(@RequestParam Integer id, @RequestBody CommentsModel comment) {
         try {
             return new ResponseMessageAPI<>(
                     service.updateCommentsLikesDislikesById(id, comment),
@@ -157,16 +161,17 @@ public class CommentsController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Comments text updated successfully ",
-                    content = {@Content(mediaType = "application/json")}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class))}),
             @ApiResponse(
                     responseCode = "404",
                     description = "There are not any comments with this id",
                     content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = String.class))})
+                            schema = @Schema(implementation = String.class))})
     })
     @Operation(summary = "This road updates text of the special comment")
     @PutMapping("updateCommentById")
-    public ResponseMessageAPI<String> updateCommentById(@RequestParam Integer id, @RequestParam String comment){
+    public ResponseMessageAPI<String> updateCommentById(@RequestParam Integer id, @RequestParam String comment) {
         try {
             return new ResponseMessageAPI<>(
                     service.updateCommentById(id, comment),
@@ -189,16 +194,17 @@ public class CommentsController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Comment deleted successfully ",
-                    content = {@Content(mediaType = "application/json")}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class))}),
             @ApiResponse(
                     responseCode = "404",
                     description = "There are not any comments with this id",
                     content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = String.class))})
+                            schema = @Schema(implementation = String.class))})
     })
     @Operation(summary = "This road deletes comment by id")
     @DeleteMapping("delete")
-    public ResponseMessageAPI<String> deleteCommentById(@RequestParam Integer id){
+    public ResponseMessageAPI<String> deleteCommentById(@RequestParam Integer id) {
         try {
             return new ResponseMessageAPI<>(
                     service.deleteCommentById(id),
