@@ -54,6 +54,9 @@ public class CommentsDaoImpl implements CommentsDao {
                     commentId = resultSet.getInt(1);
                 }
             }
+            if(commentId == -1){
+                throw new RuntimeException("Failed to add comment to database");
+            }
         } catch (SQLException sqlException) {
             throw new RuntimeException("Failed to add comment to database");
         }
