@@ -4,12 +4,14 @@ import com.jdbc.hacaton1.dao.EvaluationDao;
 import com.jdbc.hacaton1.databaseConfig.DatabaseConfiguration;
 import com.jdbc.hacaton1.models.EvaluationModel;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 
 public class EvaluationDaoImpl implements EvaluationDao {
 
@@ -17,6 +19,7 @@ public class EvaluationDaoImpl implements EvaluationDao {
 
     @Override
     public Integer createEvaluation(EvaluationModel evaluation) throws RuntimeException {
+        log.info("STARTED : EvaluationDaoImpl - createEvaluation() {}", evaluation);
         int id = -1;
 
         String selectUserSQL = "select * from users where id = ? ";
@@ -52,11 +55,13 @@ public class EvaluationDaoImpl implements EvaluationDao {
         } catch (SQLException sqlException) {
             throw new RuntimeException("Failed to add evaluation to database", sqlException);
         }
+        log.info("FINISHED : EvaluationDaoImpl - createEvaluation(). Evaluation id = {}", id);
         return id;
     }
 
     @Override
     public Double getAvgEvaluation(Integer productId) throws NullPointerException {
+        log.info("STARTED : EvaluationDaoImpl - getAvgEvaluation() {}", productId);
         Double avgEvaluation = null;
 
         String SQL = "select avg(evaluate) from evaluate_product where product_id = ? and delete_time is null";
@@ -76,12 +81,13 @@ public class EvaluationDaoImpl implements EvaluationDao {
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("STARTED : EvaluationDaoImpl - getAvgEvaluation() {}", avgEvaluation);
         return avgEvaluation;
     }
 
     @Override
     public String deleteEvaluationById(Integer id) throws NullPointerException{
-
+        log.info("STARTED : EvaluationDaoImpl - deleteEvaluationById() {}", id);
         String selectSQL = "select * from evaluate_product where id = ?";
         String deleteSQL = "update evaluate_product " +
                 "set delete_time = ? " +
@@ -103,6 +109,7 @@ public class EvaluationDaoImpl implements EvaluationDao {
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("FINISHED : EvaluationDaoImpl - deleteEvaluationById() {}", id);
         return "Evaluation with ID " + id + " was deleted!";
     }
 }

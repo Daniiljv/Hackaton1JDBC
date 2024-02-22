@@ -7,12 +7,14 @@ import com.jdbc.hacaton1.models.ProductWithSeller;
 import com.jdbc.hacaton1.models.ProductsFeed;
 import com.jdbc.hacaton1.models.ProductsModel;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 
@@ -22,6 +24,7 @@ public class ProductsDaoImpl implements ProductsDao {
 
     @Override
     public List<ProductsFeed> getProductsFeed() throws NullPointerException{
+        log.info("STARTED : ProductsDaoImpl - getProductsFeed()");
 
         List<ProductsFeed> productsFeed = new ArrayList<>();
 
@@ -49,11 +52,14 @@ public class ProductsDaoImpl implements ProductsDao {
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("FINISHED : ProductsDaoImpl - getProductsFeed()");
         return productsFeed;
     }
 
     @Override
     public ProductWithSeller getProductById(Integer id) throws NullPointerException {
+        log.info("STARTED : ProductsDaoImpl - getProductById() - {}", id);
+
         ProductWithSeller product = null;
 
         String SQL = "select p.id, p.category, p.url_photo, p.fabric, p.size, p.description, u.login " +
@@ -84,11 +90,13 @@ public class ProductsDaoImpl implements ProductsDao {
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("FINISHED : ProductsDaoImpl - getProductById() - {}", id);
         return product;
     }
 
     @Override
     public Integer createProduct(ProductsModel product) throws RuntimeException{
+        log.info("STARTED : ProductsDaoImpl - createProduct() - {}", product);
 
         int productId = -1;
 
@@ -122,11 +130,14 @@ public class ProductsDaoImpl implements ProductsDao {
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("FINISHED : ProductsDaoImpl - createProduct(), product id = {}", productId);
         return productId;
     }
 
     @Override
     public List<ProductsModel> getProductsByUserId(Integer id) throws NullPointerException{
+        log.info("STARTED : ProductsDaoImpl - getProductsByUserId() {}", id);
+
 
         List<ProductsModel> products = new ArrayList<>();
 
@@ -161,11 +172,14 @@ public class ProductsDaoImpl implements ProductsDao {
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("FINISHED : ProductsDaoImpl - getProductsByUserId() {}", products);
         return products;
     }
 
     @Override
     public List<ProductsFeed> getAllProductsWithoutEvaluation(Integer userId) throws NullPointerException{
+        log.info("STARTED : ProductsDaoImpl - getAllProductsWithoutEvaluation() {}", userId);
+
         List<ProductsFeed> products = new ArrayList<>();
 
         String select = "select delete_time from users where id = ?";
@@ -204,11 +218,14 @@ public class ProductsDaoImpl implements ProductsDao {
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("FINISHED : ProductsDaoImpl - getAllProductsWithoutEvaluation() {}", products);
         return products;
     }
 
     @Override
     public List<MineProducts> getAllMineProducts(Integer userId) throws NullPointerException{
+        log.info("STARTED : ProductsDaoImpl - getAllMineProducts() {}", userId);
+
         List<MineProducts> products = new ArrayList<>();
 
         String SQL = "select p.id, p.category, p.url_photo, p.fabric, p.size, p.description," +
@@ -248,11 +265,14 @@ public class ProductsDaoImpl implements ProductsDao {
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("FINISHED : ProductsDaoImpl - getAllMineProducts() {}", userId);
         return products;
     }
 
     @Override
     public ProductsFeed getProductWithoutEvaluationRandomly(Integer userId) throws NullPointerException{
+        log.info("STARTED : ProductsDaoImpl - getProductWithoutEvaluationRandomly() {}", userId);
+
         ProductsFeed product = null;
 
         String select = "select delete_time from users where id = ?";
@@ -286,11 +306,14 @@ public class ProductsDaoImpl implements ProductsDao {
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("FINISHED : ProductsDaoImpl - getProductWithoutEvaluationRandomly() {}", product);
         return product;
     }
 
     @Override
     public String updateProductById(Integer id, ProductsModel product) throws NullPointerException{
+        log.info("STARTED : ProductsDaoImpl - updateProductById() {}", id);
+
 
         String selectSQL = "select * from products where id = ? ";
         String updateSQL = "update products " +
@@ -320,11 +343,14 @@ public class ProductsDaoImpl implements ProductsDao {
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("FINISHED : ProductsDaoImpl - updateProductById() {}", id);
         return "Product with id " + id + " is updated";
     }
 
     @Override
     public String deleteProductById(Integer id) throws NullPointerException{
+        log.info("STARTED : ProductsDaoImpl - deleteProductById() {}", id);
+
 
         String selectSQL = "select * from products where id = ?";
 
@@ -362,6 +388,7 @@ public class ProductsDaoImpl implements ProductsDao {
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("FINISHED : ProductsDaoImpl - deleteProductById() {}", id);
         return "Product with ID " + id + " was deleted!";
     }
 }

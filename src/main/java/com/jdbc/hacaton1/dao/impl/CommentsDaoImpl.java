@@ -5,6 +5,7 @@ import com.jdbc.hacaton1.databaseConfig.DatabaseConfiguration;
 import com.jdbc.hacaton1.models.CommentsModel;
 import com.jdbc.hacaton1.models.GeneralComments;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 
 public class CommentsDaoImpl implements CommentsDao {
 
@@ -21,6 +23,7 @@ public class CommentsDaoImpl implements CommentsDao {
 
     @Override
     public Integer createComment(CommentsModel comment) throws RuntimeException{
+        log.info("STARTED : CommentsDaoImpl - createComment() {}", comment);
         int commentId = -1;
 
         String selectUserSQL = "select * from users where id = ? ";
@@ -60,12 +63,13 @@ public class CommentsDaoImpl implements CommentsDao {
         } catch (SQLException sqlException) {
             throw new RuntimeException("Failed to add comment to database");
         }
+        log.info("FINISHED : CommentsDaoImpl - createComment(). Comment id = {}", commentId);
         return commentId;
     }
 
     @Override
     public List<GeneralComments> getCommentsByProductId(Integer id) throws NullPointerException {
-
+        log.info("STARTED : CommentsDaoImpl - getCommentsByProductId() {}", id);
         List<GeneralComments> comments = new ArrayList<>();
 
         String SQL = "select u.login, c.comment, c.likes_count, c.dislikes_count from comments c " +
@@ -97,12 +101,13 @@ public class CommentsDaoImpl implements CommentsDao {
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("FINISHED : CommentsDaoImpl - getCommentsByProductId() {}", comments);
         return comments;
     }
 
     @Override
     public List<GeneralComments> getCommentsByUserId(Integer id) throws NullPointerException{
-
+        log.info("STARTED : CommentsDaoImpl - getCommentsByUserId() {}", id);
         List<GeneralComments> comments = new ArrayList<>();
 
         String SQL = "select u.login, c.comment, c.likes_count, c.dislikes_count from comments c " +
@@ -133,12 +138,13 @@ public class CommentsDaoImpl implements CommentsDao {
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("FINISHED : CommentsDaoImpl - getCommentsByUserId() {}", comments);
         return comments;
     }
 
     @Override
     public String updateCommentsLikesDislikesById(Integer id, CommentsModel comment) throws NullPointerException {
-
+        log.info("STARTED : CommentsDaoImpl - updateCommentsLikesDislikesById() {}", id);
         String selectSQL = "select * from comments where id = ?";
         String updateSQL = "update comments " +
                 "set likes_count = ?, dislikes_count = ? " +
@@ -163,12 +169,13 @@ public class CommentsDaoImpl implements CommentsDao {
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("FINISHED : CommentsDaoImpl - updateCommentsLikesDislikesById() {}", id);
         return "Comment with id " + id + " is updated";
     }
 
     @Override
     public String updateCommentById(Integer id, String comment) throws NullPointerException{
-
+        log.info("STARTED : CommentsDaoImpl - updateCommentById() {}", id);
         String selectSQL = "select * from comments where id = ?";
         String updateSQL = "update comments " +
                 "set comment = ? " +
@@ -190,12 +197,13 @@ public class CommentsDaoImpl implements CommentsDao {
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("FINISHED : CommentsDaoImpl - updateCommentById() {}", id);
         return "Comment with id " + id + " is updated";
     }
 
     @Override
     public String deleteCommentById(Integer id) throws NullPointerException {
-
+        log.info("STARTED : CommentsDaoImpl - deleteCommentById() {}", id);
         String selectSQL = "select * from comments where id = ?";
         String deleteSQL = "update comments " +
                 "set delete_time = ? " +
@@ -215,9 +223,11 @@ public class CommentsDaoImpl implements CommentsDao {
 
                 deleteStatement.executeUpdate();
             } else throw new NullPointerException();
+
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("FINISHED: CommentsDaoImpl - deleteCommentById() {}", id);
         return "Comment with ID " + id + " was deleted!";
     }
 }

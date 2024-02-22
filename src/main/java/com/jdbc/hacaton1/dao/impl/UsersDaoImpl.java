@@ -6,12 +6,14 @@ import com.jdbc.hacaton1.models.PrivateUserModel;
 import com.jdbc.hacaton1.models.UsersModel;
 import com.jdbc.hacaton1.services.MailService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 
@@ -22,6 +24,7 @@ public class UsersDaoImpl implements UsersDao {
 
     @Override
     public List<UsersModel> getAllUsers() throws NullPointerException {
+        log.info("START : UsersDaoImpl - get all users()");
         String SQL = "select * from users u " +
                 "where u.delete_time is null ";
         List<UsersModel> users = new ArrayList<>();
@@ -40,16 +43,19 @@ public class UsersDaoImpl implements UsersDao {
                 users.add(user);
             }
             if (users.isEmpty()) {
+                log.error("There are no users registered");
                 throw new NullPointerException();
             }
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("FINISH : UsersDaoImpl - get all users(). {}", users);
         return users;
     }
 
     @Override
     public Integer createUser(UsersModel userToCreate) throws RuntimeException {
+        log.info("START : UsersDaoImpl - createUser(): {}", userToCreate);
         int userId = -1;
 
         String insertSQL = "insert into users (login, password, mail_address) values (?, ?, ?) returning id";
@@ -68,14 +74,16 @@ public class UsersDaoImpl implements UsersDao {
                 mailService.sendEmailForRegistration(userToCreate, userId);
             }
         } catch (SQLException sqlException) {
+            log.error("Failed to add user to database. User : {}", userToCreate);
             throw new RuntimeException();
         }
+        log.info("FINISHED : UsersDaoImpl - createUser(). Users id = {}", userId);
         return userId;
     }
 
     @Override
     public PrivateUserModel getUserById(Integer id) throws NullPointerException {
-
+        log.info("START : UsersDaoImpl - getUserById() - {}", id);
         PrivateUserModel user = null;
 
         String SQL = "select id, login, rate from users " + "where id = ? and delete_time is null ";
@@ -93,17 +101,20 @@ public class UsersDaoImpl implements UsersDao {
             }
 
             if (user == null) {
+                log.error("User with id - {} not found",id);
                 throw new NullPointerException();
             }
 
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("FINISHED : UsersDaoImpl - getUserById() . user = {}", user);
         return user;
     }
 
     @Override
     public String updateUserById(Integer id, UsersModel user) throws NullPointerException {
+        log.info("START : UsersDaoImpl - updateUserById() - {}", id);
 
         String selectSQL = "select * from users where id = ?";
         String updateSQL = "update users " +
@@ -124,15 +135,20 @@ public class UsersDaoImpl implements UsersDao {
                 updateStatement.setInt(4, id);
 
                 updateStatement.executeUpdate();
-            } else throw new NullPointerException();
+            } else {
+                log.error("User with id - {} not found", id);
+                throw new NullPointerException();
+            }
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("FINISHED : UsersDaoImpl - updateUserById() - {}", id);
         return "User with id " + id + " updated!";
     }
 
     @Override
     public String updateUsersRateById(Integer id, Integer rate) throws NullPointerException {
+        log.info("START : UsersDaoImpl - updateUsersRateById() - {}", id);
 
         String selectSQL = "select * from users where id = ?";
         String updateSQL = "update users " + "set rate = ? " + "where id = ? and delete_time is null ";
@@ -147,21 +163,27 @@ public class UsersDaoImpl implements UsersDao {
                 updateStatement.setInt(2, id);
 
                 updateStatement.executeUpdate();
-            } else throw new NullPointerException();
+            } else {
+                log.error("User with id - {} not found",id);
+                throw new NullPointerException();
+            }
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("FINISHED : UsersDaoImpl - updateUsersRateById() - {}", id);
         return "Users rate is " + rate;
     }
 
     @Override
     public Integer getIdByLoginAndPassword(String login, String password) throws NullPointerException {
-
+        log.info("STARTED : UsersDaoImpl - getIdByLoginAndPassword() - (login {}, password{})", login, password);
         int id = 0;
 
-        String SQL = "select id, delete_time from users " + "where login = ? and password = ? and delete_time is null ";
+        String SQL = "select id, delete_time from users " +
+                "where login = ? and password = ? and delete_time is null ";
 
-        try (Connection connection = database.connection(); PreparedStatement statement = connection.prepareStatement(SQL)) {
+        try (Connection connection = database.connection();
+             PreparedStatement statement = connection.prepareStatement(SQL)) {
 
             statement.setString(1, login);
             statement.setString(2, password);
@@ -169,16 +191,22 @@ public class UsersDaoImpl implements UsersDao {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next() && resultSet.getDate("delete_time") == null) {
                 id = resultSet.getInt(1);
-            } else throw new NullPointerException();
+            } else {
+                log.error("User with login: {} and password: {} not found ", login, password);
+                throw new NullPointerException();
+            }
 
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("FINISHED : UsersDaoImpl - getIdByLoginAndPassword() - {}", id);
         return id;
     }
 
     @Override
     public String deleteUserById(Integer id) throws NullPointerException {
+        log.info("STARTED : UsersDaoImpl - deleteUserById - {}", id);
+
         String login;
         String mailAddress;
 
@@ -223,10 +251,14 @@ public class UsersDaoImpl implements UsersDao {
                 deleteStatement.executeUpdate();
 
                 mailService.informUserAboutDelete(login, mailAddress);
-            } else throw new NullPointerException();
+            } else  {
+                log.error("User with id - {} not found", id);
+                throw new NullPointerException();
+            }
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        log.info("FINISHED : UsersDaoImpl - deleteUserById() - {}", id);
         return "User with ID " + id + " was deleted!";
     }
 }
